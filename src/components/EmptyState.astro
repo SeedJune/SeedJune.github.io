@@ -1,0 +1,38 @@
+---
+/**
+ * Shown when a section has no entries yet. Deliberately quiet — an empty
+ * section should read as "not yet", not as a broken page.
+ *
+ * `hint` is only rendered during `astro dev`, so the note telling you which
+ * file to edit never ships to the live site.
+ */
+interface Props {
+  message: string;
+  hint?: string;
+}
+
+const { message, hint } = Astro.props;
+---
+
+<p class="empty">
+  {message}
+  {hint && import.meta.env.DEV && <span class="empty__hint">{hint}</span>}
+</p>
+
+<style>
+  .empty {
+    padding: var(--sp-6);
+    border: 1px dashed var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-bg-tint);
+    color: var(--c-ink-muted);
+    font-size: var(--fs-sm);
+  }
+
+  .empty__hint {
+    display: block;
+    margin-top: var(--sp-2);
+    color: var(--c-ink-faint);
+    font-size: var(--fs-xs);
+  }
+</style>

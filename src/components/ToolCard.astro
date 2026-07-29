@@ -1,0 +1,98 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'tools'>;
+}
+
+const { entry } = Astro.props;
+const { title, summary, url, cover, coverAlt } = entry.data;
+
+// Until a url is filled in, the card is a plain <div> rather than a dead <a>.
+const Tag = url ? 'a' : 'div';
+const linkProps = url
+  ? { href: url, target: '_blank', rel: 'noopener' }
+  : {};
+---
+
+<!-- When it has a url the whole card is the link — the deliberate opposite of
+     PhotoCard, which is inert on purpose. -->
+<Tag class:list={['card', { 'card--link': url }]} {...linkProps}>
+  {
+    cover && (
+      <div class="card__media media">
+        <Image
+          src={cover}
+          alt={coverAlt}
+          widths={[360, 720]}
+          sizes="(max-width: 559px) calc(100vw - 40px), 340px"
+          format="webp"
+          quality={75}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    )
+  }
+
+  <div class="card__body">
+    <h3 class:list={['card__title', { ext: url }]}>{title}</h3>
+    <p class="card__summary">{summary}</p>
+  </div>
+</Tag>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--c-bg);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .card--link {
+    transition:
+      border-color 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .card--link:hover {
+    border-color: var(--c-blue-soft);
+    transform: translateY(-2px);
+  }
+
+  .card__media {
+    --media-ratio: 16 / 10;
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  /* Screenshots read best anchored to the top — that is where the UI is. */
+  .card__media :global(img) {
+    object-position: top;
+  }
+
+  .card__body {
+    padding: var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+
+  .card__title {
+    font-size: var(--fs-base);
+    color: var(--c-ink);
+  }
+
+  .card--link .card__title {
+    color: var(--c-blue);
+  }
+
+  .card__summary {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+  }
+</style>

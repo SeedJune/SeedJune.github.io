@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '../Section.astro';
+import EmptyState from '../EmptyState.astro';
+import ProjectCard from '../ProjectCard.astro';
+
+const projects = (await getCollection('projects'))
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Section id="projects" title="Projects" accent="blue">
+  {
+    projects.length === 0 ? (
+      <EmptyState
+        message="No projects listed yet."
+        hint="Copy src/content/projects/_template.md, rename it without the underscore, and fill it in."
+      />
+    ) : (
+      <div class="list">
+        {projects.map((entry) => (
+          <ProjectCard entry={entry} />
+        ))}
+      </div>
+    )
+  }
+</Section>
+
+<style>
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+</style>

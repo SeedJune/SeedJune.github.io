@@ -1,0 +1,92 @@
+---
+import '../styles/global.css';
+import Sidebar from '../components/Sidebar.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = site.title, description = site.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+  </head>
+
+  <body>
+    <a class="skip" href="#about">Skip to content</a>
+
+    <div class="shell">
+      <Sidebar />
+      <main class="main" id="content">
+        <slot />
+      </main>
+    </div>
+
+    <style>
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        z-index: 10;
+        padding: var(--sp-2) var(--sp-4);
+        background: var(--c-bg);
+        border: 1px solid var(--c-blue);
+        border-radius: var(--r-sm);
+      }
+      .skip:focus {
+        left: var(--sp-4);
+        top: var(--sp-4);
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: 1fr;
+        min-height: 100dvh;
+      }
+
+      .main {
+        background: var(--c-bg);
+        padding: var(--sp-12) var(--w-gutter) var(--sp-16);
+        min-width: 0;
+      }
+
+      /* Content is left-aligned inside the column; only the column is placed. */
+      .main > :global(*) {
+        max-width: var(--w-content);
+      }
+
+      @media (min-width: 900px) {
+        .shell {
+          grid-template-columns: var(--w-sidebar) minmax(0, 1fr);
+        }
+        .main {
+          padding: var(--sp-16) var(--sp-12);
+        }
+      }
+
+      @media (min-width: 1280px) {
+        .main {
+          padding: var(--sp-16);
+        }
+      }
+    </style>
+  </body>
+</html>

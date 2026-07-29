@@ -1,0 +1,88 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDay, isoDay } from '../utils/date';
+
+interface Props {
+  entry: CollectionEntry<'gallery'>;
+}
+
+const { entry } = Astro.props;
+const { title, date, location, note, photo, alt, focal } = entry.data;
+---
+
+<!--
+  Deliberately inert. No <a>, no tabindex, no click handler, no pointer
+  cursor, no hover state. "You cannot click into it" is a structural fact
+  about this markup, not a styling choice that could be undone by accident.
+-->
+<figure class="photo">
+  <div class="photo__media media">
+    <Image
+      src={photo}
+      alt={alt}
+      widths={[360, 720, 1080]}
+      sizes="(max-width: 559px) calc(100vw - 40px), 340px"
+      format="webp"
+      quality={72}
+      loading="lazy"
+      decoding="async"
+      style={`object-position: ${focal};`}
+    />
+  </div>
+
+  <figcaption class="photo__meta">
+    <h3 class="photo__title">{title}</h3>
+    <p class="photo__sub">
+      <time datetime={isoDay(date)}>{formatDay(date)}</time>
+      {
+        location && (
+          <>
+            <span aria-hidden="true"> · </span>
+            <span>{location}</span>
+          </>
+        )
+      }
+    </p>
+    {note && <p class="photo__note">{note}</p>}
+  </figcaption>
+</figure>
+
+<style>
+  .photo {
+    margin: 0;
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+
+  /* Fixed ratio + cover means mixed portrait/landscape/square sources all
+     render as identical boxes. `focal` in the frontmatter decides which part
+     of a tall photo survives the crop. */
+  .photo__media {
+    --media-ratio: 4 / 3;
+  }
+
+  .photo__meta {
+    padding: var(--sp-3) var(--sp-4) var(--sp-4);
+    background: var(--c-pink-tint);
+    border-top: 1px solid var(--c-pink-soft);
+  }
+
+  .photo__title {
+    font-size: var(--fs-base);
+    color: var(--c-ink);
+    margin-bottom: var(--sp-1);
+  }
+
+  .photo__sub,
+  .photo__note {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+  }
+
+  .photo__note {
+    margin-top: var(--sp-2);
+  }
+</style>

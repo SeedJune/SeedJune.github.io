@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '../Section.astro';
+import EmptyState from '../EmptyState.astro';
+import PhotoCard from '../PhotoCard.astro';
+
+const photos = (await getCollection('gallery'))
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Section id="gallery" title="Gallery" accent="pink">
+  {
+    photos.length === 0 ? (
+      <EmptyState
+        message="No photos yet."
+        hint="Drop an image into src/assets/gallery/, then copy src/content/gallery/_template.md, rename it without the underscore, and point `photo:` at your image."
+      />
+    ) : (
+      <div class="grid">
+        {photos.map((entry) => (
+          <PhotoCard entry={entry} />
+        ))}
+      </div>
+    )
+  }
+</Section>
+
+<style>
+  /* Two columns, not three: inside a 720px content column three cards would
+     be ~215px wide, too small for a photograph to read. */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+  }
+
+  @media (min-width: 560px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

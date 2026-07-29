@@ -1,0 +1,96 @@
+---
+/**
+ * The single source of truth for section order.
+ * Adding a section = one line here + one line in src/pages/index.astro.
+ */
+export const navItems = [
+  { id: 'about', label: 'About' },
+  { id: 'news', label: 'News' },
+  { id: 'publications', label: 'Publications' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'tools', label: 'Tools' },
+  { id: 'gallery', label: 'Gallery' },
+];
+---
+
+<nav class="nav" aria-label="Sections">
+  <ul>
+    {
+      navItems.map((item) => (
+        <li>
+          <a class="nav-link" href={`#${item.id}`}>
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  /* Highlights whichever section is currently in view. The only JS on the
+     site. Styling hangs off [aria-current] so the semantics and the visuals
+     can never drift apart. */
+  const links = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
+  const byId = new Map(
+    [...links].map((a) => [a.hash.slice(1), a] as const),
+  );
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        links.forEach((a) => a.removeAttribute('aria-current'));
+        byId.get(entry.target.id)?.setAttribute('aria-current', 'true');
+      }
+    },
+    { rootMargin: '-20% 0px -70% 0px' },
+  );
+
+  document
+    .querySelectorAll('main section[id]')
+    .forEach((section) => observer.observe(section));
+</script>
+
+<style>
+  .nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-1) var(--sp-4);
+  }
+
+  .nav-link {
+    display: block;
+    position: relative;
+    padding: var(--sp-1) 0;
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+    text-decoration: none;
+  }
+
+  .nav-link:hover {
+    color: var(--c-blue);
+  }
+
+  .nav-link[aria-current] {
+    color: var(--c-blue);
+    font-weight: 600;
+  }
+
+  @media (min-width: 900px) {
+    .nav ul {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .nav-link {
+      padding: var(--sp-2) 0 var(--sp-2) var(--sp-3);
+      border-left: 2px solid transparent;
+    }
+
+    .nav-link[aria-current] {
+      border-left-color: var(--c-blue);
+    }
+  }
+</style>

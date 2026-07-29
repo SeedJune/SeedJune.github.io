@@ -1,0 +1,223 @@
+/* ==========================================================================
+   Design tokens
+   --------------------------------------------------------------------------
+   Two accent axes, used consistently so the palette reads intentional:
+
+     BLUE  = the academic / clickable axis.
+             Sidebar surface, links, active nav, project tags, section rules
+             on About / News / Publications / Experience / Projects / Tools.
+             If it is blue, it is either work or you can click it.
+
+     PINK  = the personal / human axis.
+             Avatar ring, Gallery section rule, photo-card meta strip,
+             hobby tags, footer mark.
+             Pink NEVER appears on anything clickable.
+
+   The `-soft` and `-tint` shades are decorative fills ONLY. They never carry
+   text and never form a focus ring. Every text-bearing accent uses --c-blue
+   (5.41:1) or --c-pink (6.06:1), both past WCAG AA. --c-blue-soft is 1.57:1
+   on white, which is why it is fenced off from text at the token level.
+   ========================================================================== */
+
+:root {
+  /* surfaces */
+  --c-bg: #ffffff;
+  --c-bg-tint: #f7fafd;
+  --c-border: #e9eef3;
+
+  /* text — all AA or better on white */
+  --c-ink: #1b1b1f;        /* 17.17:1  body + headings */
+  --c-ink-muted: #555f6d;  /*  6.47:1  dates, locations, captions */
+  --c-ink-faint: #6b7280;  /*  4.83:1  >=14px only */
+
+  /* blue = academic / clickable */
+  --c-blue: #2a6fa0;       /*  5.41:1  safe for links and small text */
+  --c-blue-soft: #cfe6f7;  /*  decorative only */
+  --c-blue-tint: #e8f2fb;  /*  decorative only — sidebar surface */
+
+  /* pink = personal */
+  --c-pink: #a63d62;       /*  6.06:1  safe for text */
+  --c-pink-soft: #f7c9d6;  /*  decorative only */
+  --c-pink-tint: #fdf1f5;  /*  decorative only */
+
+  /* type */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif;
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1.0625rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+  --lh-body: 1.75;
+  --lh-tight: 1.3;
+
+  /* space — 4px base */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+
+  /* shape & layout */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-full: 999px;
+  --w-sidebar: 300px;
+  --w-content: 720px;
+  --w-gutter: 20px;
+}
+
+/* ==========================================================================
+   Reset & base
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: var(--lh-tight);
+  font-weight: 600;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: var(--c-blue);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-blue);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* anchor targets sit clear of the viewport edge when jumped to */
+main section[id] {
+  scroll-margin-top: var(--sp-8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   Shared pieces
+   ========================================================================== */
+
+/* A tag / chip. Tone switches which accent axis it belongs to. */
+.tag {
+  display: inline-block;
+  padding: 0.15em 0.6em;
+  border-radius: var(--r-full);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.tag--blue {
+  background: var(--c-blue-tint);
+  color: var(--c-blue);
+}
+
+.tag--pink {
+  background: var(--c-pink-tint);
+  color: var(--c-pink);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+/*
+  Fixed-ratio media box, used by every card that shows an image.
+
+  The image is absolutely positioned on purpose. If it is left in normal flow,
+  a media box that happens to be a flex item gets `min-height: auto` and grows
+  to the image's intrinsic height — silently ignoring `aspect-ratio`, so cards
+  in the same row end up different heights depending on how tall their source
+  images happen to be. Taking the image out of flow makes the ratio the only
+  thing that can determine the box height.
+
+  Set --media-ratio per card; `object-position` is set inline where a photo
+  needs a specific part of the frame to survive the crop.
+*/
+.media {
+  position: relative;
+  aspect-ratio: var(--media-ratio, 4 / 3);
+  background: var(--c-bg-tint);
+  overflow: hidden;
+}
+
+.media > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* External-link arrow, used on cards and inline links that leave the site. */
+.ext::after {
+  content: "\2197";
+  display: inline-block;
+  margin-left: 0.25em;
+  font-size: 0.85em;
+}

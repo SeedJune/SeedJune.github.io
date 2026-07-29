@@ -1,0 +1,34 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '../Section.astro';
+import EmptyState from '../EmptyState.astro';
+import PublicationCard from '../PublicationCard.astro';
+
+const publications = (await getCollection('publications'))
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.year - a.data.year);
+---
+
+<Section id="publications" title="Publications" accent="blue">
+  {
+    publications.length === 0 ? (
+      <EmptyState
+        message="No publications yet — this section is waiting for the first one."
+        hint="Copy src/content/publications/_template.md, rename it without the underscore, and fill it in."
+      />
+    ) : (
+      <div class="list">
+        {publications.map((entry) => (
+          <PublicationCard entry={entry} />
+        ))}
+      </div>
+    )
+  }
+</Section>
+
+<style>
+  .list {
+    display: flex;
+    flex-direction: column;
+  }
+</style>

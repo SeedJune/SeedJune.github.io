@@ -1,0 +1,59 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  /** Which accent axis this section belongs to. See src/styles/global.css. */
+  accent?: 'blue' | 'pink';
+}
+
+const { id, title, accent = 'blue' } = Astro.props;
+---
+
+<section id={id} class:list={['section', `section--${accent}`]}>
+  <h2 class="section__title">{title}</h2>
+  <div class="section__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: var(--sp-8);
+  }
+
+  .section:first-child {
+    padding-top: 0;
+  }
+
+  .section__title {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-4);
+    font-size: var(--fs-xl);
+    color: var(--c-ink);
+    margin-bottom: var(--sp-6);
+  }
+
+  /* the one flourish: a soft accent rule trailing each heading */
+  .section__title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    border-radius: var(--r-full);
+    background: var(--accent-soft);
+  }
+
+  .section--blue {
+    --accent-soft: var(--c-blue-soft);
+  }
+
+  .section--pink {
+    --accent-soft: var(--c-pink-soft);
+  }
+
+  @media (min-width: 900px) {
+    .section {
+      padding-block: var(--sp-12);
+    }
+  }
+</style>

@@ -1,0 +1,19 @@
+---
+interface Props {
+  tags: readonly string[];
+  /** blue = work / academic, pink = personal. See src/styles/global.css. */
+  tone?: 'blue' | 'pink';
+}
+
+const { tags, tone = 'blue' } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <ul class="tag-list">
+      {tags.map((tag) => (
+        <li class:list={['tag', `tag--${tone}`]}>{tag}</li>
+      ))}
+    </ul>
+  )
+}

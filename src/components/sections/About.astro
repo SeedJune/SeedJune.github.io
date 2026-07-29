@@ -1,0 +1,109 @@
+---
+import Section from '../Section.astro';
+import TagList from '../TagList.astro';
+import { profile, skills } from '../../data/site';
+---
+
+<Section id="about" title="About" accent="blue">
+  <div class="about">
+    <p class="tagline">{profile.tagline}</p>
+    <p class="bio">{profile.bio}</p>
+
+    <div class="block">
+      <h3 class="subhead">Research interests</h3>
+      <ul class="interests">
+        {profile.interests.map((interest) => <li>{interest}</li>)}
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3 class="subhead">Skills</h3>
+      <TagList tags={skills.technical} tone="blue" />
+    </div>
+
+    <div class="block">
+      <h3 class="subhead">Languages</h3>
+      <ul class="languages">
+        {
+          skills.languages.map((lang) => (
+            <li>
+              <span class="languages__name">{lang.name}</span>
+              <span class="languages__level">({lang.level})</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3 class="subhead">Beyond work</h3>
+      <TagList tags={skills.hobbies} tone="pink" />
+    </div>
+  </div>
+</Section>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+
+  .tagline {
+    font-size: var(--fs-lg);
+    line-height: 1.5;
+    color: var(--c-ink);
+  }
+
+  .bio {
+    color: var(--c-ink-muted);
+  }
+
+  .block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .subhead {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+  }
+
+  .interests li {
+    position: relative;
+    padding-left: var(--sp-4);
+    font-size: var(--fs-base);
+    color: var(--c-ink-muted);
+  }
+
+  .interests li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--r-full);
+    background: var(--c-blue-soft);
+  }
+
+  .languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-6);
+    font-size: var(--fs-sm);
+  }
+
+  .languages__name {
+    color: var(--c-ink);
+  }
+
+  .languages__level {
+    color: var(--c-ink-faint);
+    margin-left: var(--sp-2);
+  }
+</style>

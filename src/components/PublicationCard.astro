@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'publications'>;
+}
+
+const { entry } = Astro.props;
+const { title, authors, venue, year, me, cover, coverAlt, pdf, code, project, award } =
+  entry.data;
+
+const links = [
+  { label: 'PDF', href: pdf },
+  { label: 'Code', href: code },
+  { label: 'Project', href: project },
+].filter((l): l is { label: string; href: string } => Boolean(l.href));
+---
+
+<article class="pub">
+  {
+    cover && (
+      <div class="pub__media media">
+        <Image
+          src={cover}
+          alt={coverAlt}
+          widths={[240, 480]}
+          sizes="(max-width: 639px) calc(100vw - 40px), 200px"
+          format="webp"
+          quality={75}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    )
+  }
+
+  <div class="pub__body">
+    <h3 class="pub__title">{title}</h3>
+
+    <p class="pub__authors">
+      {
+        authors.map((author, i) => (
+          <>
+            {i > 0 && ', '}
+            {author === me ? <strong>{author}</strong> : author}
+          </>
+        ))
+      }
+    </p>
+
+    <p class="pub__venue">{venue}, {year}</p>
+
+    {award && <p class="pub__award">{award}</p>}
+
+    {
+      links.length > 0 && (
+        <p class="pub__links">
+          {links.map((link) => (
+            <a class="ext" href={link.href} target="_blank" rel="noopener">
+              {link.label}
+            </a>
+          ))}
+        </p>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .pub {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+    padding-block: var(--sp-6);
+    border-top: 1px solid var(--c-border);
+  }
+
+  .pub:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .pub__media {
+    --media-ratio: 4 / 3;
+    border-radius: var(--r-md);
+    border: 1px solid var(--c-border);
+  }
+
+  .pub__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    min-width: 0;
+  }
+
+  .pub__title {
+    font-size: var(--fs-base);
+    color: var(--c-ink);
+  }
+
+  .pub__authors,
+  .pub__venue {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+  }
+
+  .pub__award {
+    font-size: var(--fs-sm);
+    color: var(--c-pink);
+  }
+
+  .pub__links {
+    display: flex;
+    gap: var(--sp-4);
+    margin-top: var(--sp-2);
+    font-size: var(--fs-sm);
+  }
+
+  .pub__links a {
+    text-decoration: none;
+    border-bottom: 1px solid var(--c-blue-soft);
+  }
+
+  .pub__links a:hover {
+    border-bottom-color: var(--c-blue);
+  }
+
+  @media (min-width: 640px) {
+    .pub {
+      grid-template-columns: 200px minmax(0, 1fr);
+      gap: var(--sp-6);
+    }
+  }
+</style>

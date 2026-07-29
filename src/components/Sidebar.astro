@@ -1,0 +1,203 @@
+---
+import { Image } from 'astro:assets';
+import Nav from './Nav.astro';
+import { profile, socials, site } from '../data/site';
+import avatar from '../assets/profile/avatar.png';
+
+const year = new Date().getFullYear();
+const copyrightYears =
+  year > site.startYear ? `${site.startYear}–${year}` : `${year}`;
+
+/* A social entry whose href is still a TODO would render as a relative link
+   and 404. During `astro dev` it shows as greyed-out text so it is obvious
+   what still needs filling in; in the built site it is dropped entirely, so
+   an unfinished link can never ship. */
+const isPlaceholder = (href: string) => href.startsWith('TODO');
+const visibleSocials = socials.filter(
+  (s) => !isPlaceholder(s.href) || import.meta.env.DEV,
+);
+---
+
+<aside class="sidebar">
+  <div class="card">
+    <Image
+      class="avatar"
+      src={avatar}
+      alt={`Portrait of ${profile.name}`}
+      widths={[160, 320]}
+      sizes="160px"
+      format="webp"
+      quality={80}
+      loading="eager"
+    />
+
+    <div class="identity">
+      <p class="name">{profile.name}</p>
+      <p class="pronouns">{profile.pronouns}</p>
+      <p class="role">{profile.role}</p>
+      <a class="affil" href={profile.affiliationUrl}>{profile.affiliation}</a>
+    </div>
+  </div>
+
+  <Nav />
+
+  <ul class="socials">
+    {
+      visibleSocials.map((s) =>
+        isPlaceholder(s.href) ? (
+          <li>
+            <span class="pending" title="Add this URL in src/data/site.ts">
+              {s.label}
+            </span>
+          </li>
+        ) : (
+          <li>
+            <a
+              href={s.href}
+              rel="me noopener"
+              target={s.href.startsWith('mailto:') ? undefined : '_blank'}
+            >
+              {s.label}
+            </a>
+          </li>
+        ),
+      )
+    }
+  </ul>
+
+  <p class="copyright">&copy; {copyrightYears} {profile.name}</p>
+</aside>
+
+<style>
+  .sidebar {
+    background: var(--c-blue-tint);
+    border-bottom: 1px solid var(--c-border);
+    padding: var(--sp-6) var(--w-gutter);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+
+  /* --- identity card ---------------------------------------------------- */
+
+  .card {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+
+  .avatar {
+    width: 72px;
+    height: 72px;
+    flex: none;
+    border-radius: var(--r-full);
+    object-fit: cover;
+    /* pink ring = the personal axis; decorative, never carries text */
+    box-shadow: 0 0 0 3px var(--c-bg), 0 0 0 6px var(--c-pink-soft);
+  }
+
+  .identity {
+    min-width: 0;
+  }
+
+  .name {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    line-height: var(--lh-tight);
+    color: var(--c-ink);
+  }
+
+  .pronouns {
+    font-size: var(--fs-xs);
+    color: var(--c-ink-faint);
+    line-height: 1.5;
+  }
+
+  .role {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+    line-height: 1.5;
+    margin-top: var(--sp-2);
+  }
+
+  .affil {
+    display: inline-block;
+    font-size: var(--fs-sm);
+    line-height: 1.5;
+    color: var(--c-blue);
+    text-decoration: none;
+    border-bottom: 1px solid var(--c-blue-soft);
+  }
+
+  .affil:hover {
+    border-bottom-color: var(--c-blue);
+  }
+
+  /* --- socials ---------------------------------------------------------- */
+
+  .socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-4);
+    font-size: var(--fs-sm);
+  }
+
+  .socials a {
+    color: var(--c-ink-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .socials a:hover {
+    color: var(--c-blue);
+    border-bottom-color: var(--c-blue-soft);
+  }
+
+  /* dev-only reminder that a link still needs a URL */
+  .pending {
+    color: var(--c-ink-faint);
+    text-decoration: line-through;
+    cursor: help;
+  }
+
+  .copyright {
+    font-size: var(--fs-xs);
+    color: var(--c-ink-faint);
+  }
+
+  /* --- desktop: a real sticky column ------------------------------------ */
+
+  @media (min-width: 900px) {
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      overflow-y: auto;
+      border-bottom: none;
+      border-right: 1px solid var(--c-border);
+      padding: var(--sp-8) var(--sp-6);
+      gap: var(--sp-8);
+    }
+
+    .card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--sp-4);
+    }
+
+    .avatar {
+      width: 132px;
+      height: 132px;
+    }
+
+    .name {
+      font-size: var(--fs-2xl);
+    }
+
+    /* pushes the copyright to the bottom of the viewport-tall column */
+    .copyright {
+      margin-top: auto;
+      padding-top: var(--sp-6);
+    }
+  }
+</style>

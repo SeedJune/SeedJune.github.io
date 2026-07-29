@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import TagList from './TagList.astro';
+
+interface Props {
+  entry: CollectionEntry<'projects'>;
+}
+
+const { entry } = Astro.props;
+const { title, date, summary, tags, cover, coverAlt, repo, demo } = entry.data;
+const year = date.getFullYear();
+---
+
+<article class="card">
+  {
+    cover && (
+      <div class="card__media media">
+        <Image
+          src={cover}
+          alt={coverAlt}
+          widths={[240, 480]}
+          sizes="(max-width: 639px) calc(100vw - 40px), 220px"
+          format="webp"
+          quality={75}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    )
+  }
+
+  <div class="card__body">
+    <div class="card__head">
+      <h3 class="card__title">{title}</h3>
+      <span class="card__year">{year}</span>
+    </div>
+
+    <p class="card__summary">{summary}</p>
+
+    <TagList tags={tags} tone="blue" />
+
+    {
+      (repo || demo) && (
+        <p class="card__links">
+          {repo && (
+            <a class="ext" href={repo} target="_blank" rel="noopener">
+              Code
+            </a>
+          )}
+          {demo && (
+            <a class="ext" href={demo} target="_blank" rel="noopener">
+              Demo
+            </a>
+          )}
+        </p>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+    padding: var(--sp-4);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    background: var(--c-bg);
+    transition: border-color 0.15s ease;
+  }
+
+  .card:hover {
+    border-color: var(--c-blue-soft);
+  }
+
+  .card__media {
+    --media-ratio: 4 / 3;
+    border-radius: var(--r-md);
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    min-width: 0;
+  }
+
+  .card__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-4);
+  }
+
+  .card__title {
+    font-size: var(--fs-lg);
+    color: var(--c-ink);
+  }
+
+  .card__year {
+    flex: none;
+    font-size: var(--fs-sm);
+    color: var(--c-ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .card__summary {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+  }
+
+  .card__links {
+    display: flex;
+    gap: var(--sp-4);
+    font-size: var(--fs-sm);
+  }
+
+  .card__links a {
+    text-decoration: none;
+    border-bottom: 1px solid var(--c-blue-soft);
+  }
+
+  .card__links a:hover {
+    border-bottom-color: var(--c-blue);
+  }
+
+  @media (min-width: 640px) {
+    .card {
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: var(--sp-6);
+    }
+  }
+</style>

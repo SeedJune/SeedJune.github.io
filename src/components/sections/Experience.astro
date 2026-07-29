@@ -1,0 +1,100 @@
+---
+import Section from '../Section.astro';
+import EmptyState from '../EmptyState.astro';
+import TimelineItem from '../TimelineItem.astro';
+import { education, experience, awards } from '../../data/site';
+---
+
+<Section id="experience" title="Experience" accent="blue">
+  <div class="groups">
+    <div class="group">
+      <h3 class="subhead">Education</h3>
+      {
+        education.length === 0 ? (
+          <EmptyState
+            message="No entries yet."
+            hint="Add to the `education` array in src/data/site.ts."
+          />
+        ) : (
+          <ul>
+            {education.map((item) => (
+              <TimelineItem
+                title={item.degree}
+                org={item.org}
+                start={item.start}
+                end={item.end}
+                current={item.current}
+                summary={item.summary}
+              />
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    <div class="group">
+      <h3 class="subhead">Research &amp; internships</h3>
+      {
+        experience.length === 0 ? (
+          <EmptyState
+            message="No entries yet."
+            hint="Add to the `experience` array in src/data/site.ts."
+          />
+        ) : (
+          <ul>
+            {experience.map((item) => (
+              <TimelineItem
+                title={item.role}
+                org={item.org}
+                start={item.start}
+                end={item.end}
+                current={item.current}
+                summary={item.summary}
+              />
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    <div class="group">
+      <h3 class="subhead">Awards</h3>
+      {
+        awards.length === 0 ? (
+          <EmptyState
+            message="No entries yet."
+            hint="Add to the `awards` array in src/data/site.ts."
+          />
+        ) : (
+          <ul>
+            {awards.map((item) => (
+              <TimelineItem title={item.title} org={item.org} on={item.date} />
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  .groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-8);
+  }
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+
+  .subhead {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+  }
+</style>

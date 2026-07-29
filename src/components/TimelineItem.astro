@@ -1,0 +1,80 @@
+---
+import { formatRange } from '../utils/date';
+
+interface Props {
+  title: string;
+  org: string;
+  start?: string;
+  end?: string | null;
+  current?: boolean;
+  summary?: string;
+  /** A single date instead of a range — used by awards. */
+  on?: string;
+}
+
+const { title, org, start, end, current, summary, on } = Astro.props;
+
+const when = on
+  ? formatRange(on, on).split(' — ')[0]
+  : start
+    ? formatRange(start, end, current)
+    : '';
+---
+
+<li class="item">
+  <p class="item__when">{when}</p>
+  <div class="item__body">
+    <h3 class="item__title">{title}</h3>
+    <p class="item__org">{org}</p>
+    {summary && <p class="item__summary">{summary}</p>}
+  </div>
+</li>
+
+<style>
+  .item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-1);
+    padding-block: var(--sp-4);
+    border-top: 1px solid var(--c-border);
+  }
+
+  .item:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .item__when {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .item__title {
+    font-size: var(--fs-base);
+    color: var(--c-ink);
+  }
+
+  .item__org {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+  }
+
+  .item__summary {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+  }
+
+  /* Dates move into their own left column once there is room for them. */
+  @media (min-width: 640px) {
+    .item {
+      grid-template-columns: 10.5rem minmax(0, 1fr);
+      gap: var(--sp-4);
+    }
+
+    .item__when {
+      padding-top: 0.15em;
+    }
+  }
+</style>

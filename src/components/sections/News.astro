@@ -1,0 +1,64 @@
+---
+import Section from '../Section.astro';
+import EmptyState from '../EmptyState.astro';
+import { news } from '../../data/site';
+import { formatMonth } from '../../utils/date';
+---
+
+<Section id="news" title="News" accent="blue">
+  {
+    news.length === 0 ? (
+      <EmptyState
+        message="Nothing to report just yet."
+        hint="Add entries to the `news` array in src/data/site.ts — newest first."
+      />
+    ) : (
+      <ul class="news">
+        {news.map((item) => (
+          <li class="news__item">
+            <span class="news__date">{formatMonth(item.date)}</span>
+            <span class="news__text">{item.text}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Section>
+
+<style>
+  .news {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .news__item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-1);
+    padding-block: var(--sp-3);
+    border-top: 1px solid var(--c-border);
+  }
+
+  .news__item:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .news__date {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .news__text {
+    color: var(--c-ink-muted);
+    font-size: var(--fs-sm);
+  }
+
+  @media (min-width: 640px) {
+    .news__item {
+      grid-template-columns: 10.5rem minmax(0, 1fr);
+      gap: var(--sp-4);
+    }
+  }
+</style>
