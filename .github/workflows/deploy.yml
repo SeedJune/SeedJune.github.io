@@ -1,8 +1,14 @@
 name: Deploy to GitHub Pages
 
+# TO GO LIVE, two steps:
+#   1. Repo Settings -> Pages -> Build and deployment -> Source: "GitHub Actions"
+#   2. Uncomment the `push` trigger below, commit, and push.
+#
+# Until then the site is only deployed if you run this workflow by hand from
+# the Actions tab, so pushing code never publishes anything by accident.
 on:
-  push:
-    branches: [main]
+  # push:
+  #   branches: [main]
   workflow_dispatch:
 
 permissions:
