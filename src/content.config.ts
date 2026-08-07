@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { blogSeries } from './data/site';
 
 /**
  * Files starting with an underscore are ignored by every collection below.
@@ -85,4 +86,26 @@ const publications = defineCollection({
     }),
 });
 
-export const collections = { projects, tools, gallery, publications };
+/* The series ids from src/data/site.ts, as the tuple z.enum needs. Keeping the
+   list there rather than here means the tab order and the validation can never
+   disagree — there is only one list. */
+const seriesIds = blogSeries.map((s) => s.id) as [string, ...string[]];
+
+const blogs = defineCollection({
+  loader: glob({ pattern, base: './src/content/blogs' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      date: z.coerce.date(),
+      summary: z.string(),
+      /* Must be one of the ids in `blogSeries`. Anything else fails the build
+         and names the file — see the note on blogSeries in src/data/site.ts. */
+      series: z.enum(seriesIds),
+      tags: z.array(z.string()).default([]),
+      cover: image().optional(),
+      coverAlt: z.string().default(''),
+      draft: z.boolean().default(false),
+    }),
+});
+
+export const collections = { projects, tools, gallery, publications, blogs };

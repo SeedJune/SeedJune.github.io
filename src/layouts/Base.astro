@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Sidebar from '../components/Sidebar.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import { site } from '../data/site';
 
 interface Props {
@@ -28,10 +29,49 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
+
+    {/*
+      Must stay inline and stay here, above the body. It sets the theme before
+      the first paint; loaded as a module or moved lower it would run after the
+      page has already been painted in the wrong theme, and every visit in dark
+      mode would start with a flash of white.
+
+      Precedence: an explicit earlier choice wins, otherwise the operating
+      system's preference decides.
+    */}
+    <script is:inline>
+      (() => {
+        let saved = null;
+        try {
+          saved = localStorage.getItem('theme');
+        } catch {
+          /* storage blocked (Safari private mode) — fall through to the OS */
+        }
+
+        document.documentElement.dataset.theme =
+          saved === 'light' || saved === 'dark'
+            ? saved
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+
+        /* Marks that scripting is alive, before anything is painted. The theme
+           toggle is hidden until this lands, so with JavaScript off it never
+           appears rather than appearing as a button that cannot do anything —
+           the same rule the Blogs filter and the About language switch follow.
+           Setting it here instead of from the button's own script means there
+           is no frame where the button is missing and then pops in. */
+        document.documentElement.dataset.js = '1';
+      })();
+    </script>
   </head>
 
   <body>
-    <a class="skip" href="#about">Skip to content</a>
+    <!-- Points at <main> rather than at #about: the About section only exists
+         on the home page, and this layout now also wraps blog posts. -->
+    <a class="skip" href="#content">Skip to content</a>
+
+    <ThemeToggle />
 
     <div class="shell">
       <Sidebar />

@@ -1,0 +1,157 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '../Section.astro';
+import EmptyState from '../EmptyState.astro';
+import BlogCard from '../BlogCard.astro';
+import { blogSeries } from '../../data/site';
+
+const posts = (await getCollection('blogs'))
+  .filter((entry) => !entry.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+/* Only series that actually have posts become tabs. An empty tab is a dead
+   end — you click it and the list goes blank — so it is never rendered. */
+const tabs = blogSeries
+  .map((s) => ({
+    ...s,
+    count: posts.filter((p) => p.data.series === s.id).length,
+  }))
+  .filter((s) => s.count > 0);
+---
+
+<Section id="blogs" title="Blogs" accent="blue">
+  {
+    posts.length === 0 ? (
+      <EmptyState
+        message="No posts yet."
+        hint="Copy src/content/blogs/_template.md, rename it without the underscore, and set `series:` to one of the ids in `blogSeries` in src/data/site.ts."
+      />
+    ) : (
+      <div class="blogs" data-blogs>
+        {/*
+          `hidden` until the script removes it: with JavaScript off the tabs
+          would be inert controls promising a filter that cannot happen, so
+          they simply do not appear and every post stays visible.
+        */}
+        <div class="filters" role="group" aria-label="Filter posts by series" hidden>
+          <button class="filter" type="button" data-filter="all" aria-pressed="true">
+            All <span class="filter__count">{posts.length}</span>
+          </button>
+          {tabs.map((tab) => (
+            <button class="filter" type="button" data-filter={tab.id} aria-pressed="false">
+              {tab.label} <span class="filter__count">{tab.count}</span>
+            </button>
+          ))}
+        </div>
+
+        <div class="list" data-blog-list>
+          {posts.map((entry) => (
+            <BlogCard entry={entry} />
+          ))}
+        </div>
+      </div>
+    )
+  }
+</Section>
+
+<script>
+  /*
+    The section's filter. Purely client-side: every post is in the HTML from
+    the start, so the page works with JavaScript off (see the `hidden` note
+    above) and filtering never costs a network request.
+  */
+  const root = document.querySelector<HTMLElement>('[data-blogs]');
+
+  if (root) {
+    const filters = root.querySelector<HTMLElement>('.filters');
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-series]')];
+
+    /* The top border belongs to whichever card is currently first on screen,
+       not to whichever card happens to be first in the markup. */
+    const markFirstVisible = () => {
+      cards.forEach((card) => card.removeAttribute('data-first'));
+      cards.find((card) => !card.hidden)?.setAttribute('data-first', '');
+    };
+
+    const apply = (want: string) => {
+      cards.forEach((card) => {
+        card.hidden = want !== 'all' && card.dataset.series !== want;
+      });
+      markFirstVisible();
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        buttons.forEach((b) =>
+          b.setAttribute('aria-pressed', String(b === button)),
+        );
+        apply(button.dataset.filter ?? 'all');
+      });
+    });
+
+    filters?.removeAttribute('hidden');
+    markFirstVisible();
+  }
+</script>
+
+<style>
+  .blogs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  /* Same trap as .card[hidden] in BlogCard.astro: `display: flex` above beats
+     the UA's [hidden] rule, so without this the no-JS fallback breaks and the
+     tab bar shows up as a row of buttons that do nothing. */
+  .filters[hidden] {
+    display: none;
+  }
+
+  .filter {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--sp-2);
+    padding: var(--sp-1) var(--sp-3);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-full);
+    background: transparent;
+    color: var(--c-ink-muted);
+    font: inherit;
+    font-size: var(--fs-sm);
+    line-height: 1.8;
+    cursor: pointer;
+  }
+
+  .filter:hover {
+    border-color: var(--c-blue);
+    color: var(--c-blue);
+  }
+
+  /* Selected state hangs off aria-pressed, the same trick Nav.astro uses for
+     the active link: the semantics and the visuals cannot drift apart. */
+  .filter[aria-pressed='true'] {
+    background: var(--c-blue-tint);
+    border-color: var(--c-blue-soft);
+    color: var(--c-blue);
+    font-weight: 600;
+  }
+
+  .filter__count {
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+  }
+</style>

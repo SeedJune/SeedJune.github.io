@@ -27,9 +27,11 @@ prose is a Markdown file; anything that is a short list is a TypeScript array.**
 | Education, research/internships, awards | `src/data/site.ts` |
 | Projects | `src/content/projects/*.md` |
 | Tools | `src/content/tools/*.md` |
+| Blog posts | `src/content/blogs/*.md` |
+| Blog series (the filter tabs) | `src/data/site.ts` → `blogSeries` |
 | Photos | `src/content/gallery/*.md` |
 | Publications | `src/content/publications/*.md` |
-| Images | `src/assets/{profile,projects,tools,gallery}/` |
+| Images | `src/assets/{profile,projects,tools,blogs,gallery}/` |
 
 ### Adding one of something
 
@@ -67,8 +69,14 @@ src/
 ├── layouts/Base.astro    <head>, the two-column shell
 ├── components/           cards, nav, sidebar, section wrapper
 │   └── sections/         one file per section of the page
-└── pages/index.astro     the whole site, one line per section
+└── pages/
+    ├── index.astro       the home page, one line per section
+    └── blog/[...slug].astro   one generated page per blog post
 ```
+
+Blog posts are the one collection whose body matters: the Markdown under the
+frontmatter becomes a page at `/blog/<filename>/`. Every other collection is
+frontmatter-only and renders as a card on the home page.
 
 ### Adding a whole new section
 

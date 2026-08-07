@@ -1,0 +1,219 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import TagList from '../../components/TagList.astro';
+import { formatDay, isoDay } from '../../utils/date';
+import { blogSeries } from '../../data/site';
+
+/* One page per published post. Drafts get no page at all — not a hidden one,
+   no page — so an unfinished post cannot be reached by guessing its URL. */
+export async function getStaticPaths() {
+  const posts = (await getCollection('blogs')).filter(
+    (entry) => !entry.data.draft,
+  );
+
+  return posts.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { title, date, summary, series, tags, cover, coverAlt } = entry.data;
+const { Content } = await render(entry);
+
+const seriesLabel = blogSeries.find((s) => s.id === series)?.label ?? series;
+---
+
+<Base title={`${title} — Blog`} description={summary}>
+  <article class="post">
+    <header class="post__head">
+      <a class="post__back" href="/#blogs">← All posts</a>
+
+      <p class="post__meta">
+        <span class="post__series">{seriesLabel}</span>
+        <time datetime={isoDay(date)}>{formatDay(date)}</time>
+      </p>
+
+      <h1 class="post__title">{title}</h1>
+      <p class="post__summary">{summary}</p>
+
+      {tags.length > 0 && <TagList tags={tags} tone="blue" />}
+    </header>
+
+    {
+      cover && (
+        <div class="post__cover media">
+          <Image
+            src={cover}
+            alt={coverAlt}
+            widths={[720, 1440]}
+            sizes="(max-width: 759px) calc(100vw - 40px), 720px"
+            format="webp"
+            quality={80}
+            loading="eager"
+          />
+        </div>
+      )
+    }
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer class="post__foot">
+      <a href="/#blogs">← Back to all posts</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .post {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+
+  .post__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .post__back {
+    font-size: var(--fs-sm);
+    text-decoration: none;
+  }
+
+  .post__back:hover {
+    text-decoration: underline;
+  }
+
+  .post__meta {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-3);
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post__series {
+    color: var(--c-blue);
+    font-weight: 600;
+  }
+
+  .post__title {
+    font-size: var(--fs-2xl);
+    color: var(--c-ink);
+  }
+
+  .post__summary {
+    color: var(--c-ink-muted);
+  }
+
+  .post__cover {
+    --media-ratio: 16 / 9;
+    border-radius: var(--r-md);
+  }
+
+  .post__foot {
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--c-border);
+    font-size: var(--fs-sm);
+  }
+
+  /* ------------------------------------------------------------------
+     Prose. global.css strips margins off <p> and bullets off <ul> for the
+     card layouts, which is right everywhere except here — this is the one
+     place on the site where raw Markdown becomes the page, so the defaults
+     have to be put back. :global because the markup comes from <Content />.
+     ------------------------------------------------------------------ */
+  .prose {
+    color: var(--c-ink);
+  }
+
+  .prose > :global(* + *) {
+    margin-top: var(--sp-4);
+  }
+
+  .prose :global(h2) {
+    margin-top: var(--sp-8);
+    font-size: var(--fs-xl);
+  }
+
+  .prose :global(h3) {
+    margin-top: var(--sp-6);
+    font-size: var(--fs-lg);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: var(--sp-6);
+  }
+
+  .prose :global(ul) {
+    list-style: disc;
+  }
+
+  .prose :global(ol) {
+    list-style: decimal;
+  }
+
+  .prose :global(li + li) {
+    margin-top: var(--sp-2);
+  }
+
+  .prose :global(img) {
+    border-radius: var(--r-md);
+  }
+
+  .prose :global(blockquote) {
+    margin: 0;
+    padding-left: var(--sp-4);
+    border-left: 3px solid var(--c-blue-soft);
+    color: var(--c-ink-muted);
+  }
+
+  .prose :global(code) {
+    padding: 0.15em 0.4em;
+    border-radius: var(--r-sm);
+    background: var(--c-bg-tint);
+    font-size: 0.9em;
+  }
+
+  .prose :global(pre) {
+    padding: var(--sp-4);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    overflow-x: auto;
+  }
+
+  /* The highlighted block sets its own background; the inline chrome above
+     would double up on it. */
+  .prose :global(pre code) {
+    padding: 0;
+    background: none;
+    font-size: var(--fs-sm);
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-sm);
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    padding: var(--sp-2) var(--sp-3);
+    border: 1px solid var(--c-border);
+    text-align: left;
+  }
+
+  .prose :global(hr) {
+    border: none;
+    border-top: 1px solid var(--c-border);
+  }
+</style>

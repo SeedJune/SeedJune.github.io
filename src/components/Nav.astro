@@ -10,16 +10,23 @@ export const navItems = [
   { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
   { id: 'tools', label: 'Tools' },
+  { id: 'blogs', label: 'Blogs' },
   { id: 'gallery', label: 'Gallery' },
 ];
 ---
 
+<!--
+  Links are root-relative (`/#about`, not `#about`) so they still work from a
+  blog post at /blog/…/, where a bare fragment would point at an anchor that
+  does not exist on that page. On the home page the browser still treats these
+  as same-document jumps, so the smooth scroll is unaffected.
+-->
 <nav class="nav" aria-label="Sections">
   <ul>
     {
       navItems.map((item) => (
         <li>
-          <a class="nav-link" href={`#${item.id}`}>
+          <a class="nav-link" href={`/#${item.id}`}>
             {item.label}
           </a>
         </li>
@@ -29,9 +36,10 @@ export const navItems = [
 </nav>
 
 <script>
-  /* Highlights whichever section is currently in view. The only JS on the
-     site. Styling hangs off [aria-current] so the semantics and the visuals
-     can never drift apart. */
+  /* Highlights whichever section is currently in view. One of the two scripts
+     on the site — the other is the series filter in sections/Blogs.astro.
+     Styling hangs off [aria-current] so the semantics and the visuals can
+     never drift apart. */
   const links = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
   const byId = new Map(
     [...links].map((a) => [a.hash.slice(1), a] as const),

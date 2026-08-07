@@ -70,6 +70,52 @@
   --w-sidebar: 300px;
   --w-content: 720px;
   --w-gutter: 20px;
+
+  color-scheme: light;
+}
+
+/* ==========================================================================
+   Dark theme
+   --------------------------------------------------------------------------
+   Only the twelve colour tokens are redeclared — nothing else in the codebase
+   hard-codes a colour, so overriding them here re-themes every component at
+   once. Type, spacing and shape are shared by both themes.
+
+   The two accent axes keep their meaning (blue = academic/clickable, pink =
+   personal, pink never on anything clickable) but swap direction: on white the
+   accents are darker than the page, on black they are lighter. The `-soft` and
+   `-tint` shades become dark surfaces rather than pale fills, so they still
+   read as "a tinted panel" and still never carry text of their own.
+
+   Every ratio below is measured against the surface the token actually sits on
+   in the markup, not against the page background. The pairs that matter and
+   are easy to get wrong: --c-ink and --c-ink-muted sit on --c-blue-tint in the
+   sidebar and on --c-pink-tint in the gallery caption strip, and --c-blue sits
+   on --c-blue-tint in an active filter chip. All pass AA.
+   ========================================================================== */
+
+:root[data-theme='dark'] {
+  /* surfaces — pure black base, with barely-raised panels above it */
+  --c-bg: #000000;
+  --c-bg-tint: #0c0d10;
+  --c-border: #23262c;     /*  1.39:1  visible edge without glowing */
+
+  /* text — all AA or better on black */
+  --c-ink: #f2f3f5;        /* 18.91:1  body + headings */
+  --c-ink-muted: #a8b0bb;  /*  9.59:1  dates, locations, captions */
+  --c-ink-faint: #8b94a1;  /*  6.85:1  >=14px only */
+
+  /* blue = academic / clickable */
+  --c-blue: #6db3e8;       /*  9.26:1  on black, 7.53:1 on --c-blue-tint */
+  --c-blue-soft: #1e3a52;  /*  decorative only */
+  --c-blue-tint: #0f1d2a;  /*  decorative only — sidebar surface */
+
+  /* pink = personal */
+  --c-pink: #f0a0bd;       /* 10.47:1  on black, 9.14:1 on --c-pink-tint */
+  --c-pink-soft: #4a2233;  /*  decorative only */
+  --c-pink-tint: #1f1017;  /*  decorative only — gallery caption strip */
+
+  color-scheme: dark;
 }
 
 /* ==========================================================================
@@ -212,6 +258,24 @@ main section[id] {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/*
+  Syntax highlighting. Shiki is configured in astro.config.mjs to emit both
+  themes as custom properties rather than a fixed colour; these two rules are
+  what actually chooses between them. Without them every token renders
+  colourless, so they are load-bearing, not cosmetic.
+*/
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+:root[data-theme='dark'] .astro-code,
+:root[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
 }
 
 /* External-link arrow, used on cards and inline links that leave the site. */

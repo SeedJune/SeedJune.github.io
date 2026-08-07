@@ -1,0 +1,146 @@
+---
+/**
+ * Day/night switch, pinned to the top-right of every page.
+ *
+ * The theme itself is applied by the inline script in Base.astro's <head>,
+ * which runs before the first paint. This component only flips it afterwards.
+ *
+ * Which icon shows is decided in CSS from :root[data-theme], never by script.
+ * If JavaScript set it on load there would be a frame where the page is dark
+ * and the button still claims it is light.
+ */
+---
+
+<button
+  class="theme-toggle"
+  type="button"
+  data-theme-toggle
+  aria-label="Toggle dark mode"
+  aria-pressed="false"
+>
+  <!-- Shown in light mode: click to go dark. -->
+  <svg
+    class="theme-toggle__icon theme-toggle__icon--moon"
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
+  </svg>
+
+  <!-- Shown in dark mode: click to go light. -->
+  <svg
+    class="theme-toggle__icon theme-toggle__icon--sun"
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="4"></circle>
+    <path
+      d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+    ></path>
+  </svg>
+</button>
+
+<script>
+  /*
+    Flips the theme and remembers the choice. `localStorage` is wrapped because
+    it throws outright in Safari's private mode — the toggle still works for
+    the session there, it just cannot remember.
+  */
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+
+  if (button) {
+    const root = document.documentElement;
+
+    const sync = () => {
+      button.setAttribute(
+        'aria-pressed',
+        String(root.dataset.theme === 'dark'),
+      );
+    };
+
+    button.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      sync();
+
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        /* storage unavailable — the choice just will not outlive the tab */
+      }
+    });
+
+    sync();
+  }
+</script>
+
+<style>
+  .theme-toggle {
+    position: fixed;
+    top: var(--sp-4);
+    right: var(--sp-4);
+    /* Above the page, below the skip link (z-index 10) so keyboard users
+       still get the skip target first. */
+    z-index: 5;
+
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-full);
+    background: var(--c-bg);
+    color: var(--c-ink-muted);
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--c-blue);
+    color: var(--c-blue);
+  }
+
+  /* No scripting, no switch — see the note in Base.astro's head script. */
+  :global(:root:not([data-js])) .theme-toggle {
+    display: none;
+  }
+
+  /* Both icons occupy the same grid cell; only one is ever visible. */
+  .theme-toggle__icon {
+    grid-area: 1 / 1;
+  }
+
+  .theme-toggle__icon--sun {
+    display: none;
+  }
+
+  :global(:root[data-theme='dark']) .theme-toggle__icon--sun {
+    display: block;
+  }
+
+  :global(:root[data-theme='dark']) .theme-toggle__icon--moon {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    .theme-toggle {
+      top: var(--sp-6);
+      right: var(--sp-6);
+    }
+  }
+</style>

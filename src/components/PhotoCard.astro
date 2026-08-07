@@ -49,7 +49,16 @@ const { title, date, location, note, photo, alt, focal } = entry.data;
 </figure>
 
 <style>
+  /*
+    Flex column, not plain block flow: cards in a row are stretched to the
+    tallest one by the grid, and whatever height the caption does not use has
+    to be absorbed by something. As a block container the leftover showed
+    through as a white band under the pink strip, so the meta panel below is
+    given `flex: 1` to take it.
+  */
   .photo {
+    display: flex;
+    flex-direction: column;
     margin: 0;
     background: var(--c-bg);
     border: 1px solid var(--c-border);
@@ -62,9 +71,13 @@ const { title, date, location, note, photo, alt, focal } = entry.data;
      of a tall photo survives the crop. */
   .photo__media {
     --media-ratio: 4 / 3;
+    /* Never let the flex column squeeze the frame out of its ratio. */
+    flex: none;
   }
 
   .photo__meta {
+    /* Fills the height the grid's stretch leaves over — see .photo above. */
+    flex: 1;
     padding: var(--sp-3) var(--sp-4) var(--sp-4);
     background: var(--c-pink-tint);
     border-top: 1px solid var(--c-pink-soft);

@@ -2,12 +2,101 @@
 import Section from '../Section.astro';
 import TagList from '../TagList.astro';
 import { profile, skills } from '../../data/site';
+
+/* A `\n` in `bio` means "new paragraph". It has to be turned into real markup
+   here: HTML collapses newlines into spaces, so dropping the whole string into
+   one <p> renders it as a single run-on block no matter how it is written in
+   site.ts. Blank entries are dropped, so a trailing `\n` costs nothing. */
+const toParagraphs = (text: string) =>
+  text
+    .split('\n')
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+/*
+  The self-introduction, once per language. Only this block is translated —
+  the rest of the About section, and the rest of the site, stays English.
+
+  `lang` lands on the wrapper as a real attribute, so a screen reader switches
+  voice when the reader switches language rather than reading Chinese with an
+  English synthesiser.
+*/
+/* No toggle unless there is genuinely something to toggle to: an empty
+   `taglineZh`/`bioZh` would otherwise ship a button that blanks the intro. */
+const hasTranslation = Boolean(
+  profile.taglineZh?.trim() && profile.bioZh?.trim(),
+);
+
+const intros = [
+  {
+    code: 'en',
+    lang: 'en',
+    label: 'EN',
+    tagline: profile.tagline,
+    paragraphs: toParagraphs(profile.bio),
+  },
+  ...(hasTranslation
+    ? [
+        {
+          code: 'zh',
+          lang: 'zh-CN',
+          label: '中文',
+          tagline: profile.taglineZh,
+          paragraphs: toParagraphs(profile.bioZh),
+        },
+      ]
+    : []),
+];
 ---
 
 <Section id="about" title="About" accent="blue">
   <div class="about">
-    <p class="tagline">{profile.tagline}</p>
-    <p class="bio">{profile.bio}</p>
+    <div class="intro" data-intro>
+      {/*
+        `hidden` until the script removes it, the same contract the Blogs
+        filter uses: with JavaScript off the English intro simply stands on
+        its own rather than sitting under a button that cannot do anything.
+      */}
+      {
+        hasTranslation && (
+          <div
+            class="intro__switch"
+            role="group"
+            aria-label="Introduction language"
+            hidden
+          >
+            {intros.map((intro, i) => (
+              <button
+                class="intro__lang"
+                type="button"
+                data-lang={intro.code}
+                aria-pressed={i === 0 ? 'true' : 'false'}
+              >
+                {intro.label}
+              </button>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        intros.map((intro, i) => (
+          <div
+            class="intro__panel"
+            data-panel={intro.code}
+            lang={intro.lang}
+            hidden={i > 0}
+          >
+            <p class="tagline">{intro.tagline}</p>
+            <div class="bio">
+              {intro.paragraphs.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
 
     <div class="block">
       <h3 class="subhead">Research interests</h3>
@@ -42,8 +131,91 @@ import { profile, skills } from '../../data/site';
   </div>
 </Section>
 
+<script>
+  /*
+    Swaps the self-introduction between languages. Nothing is fetched — both
+    versions are already in the page, so the switch is instant and works with
+    the site served as static files.
+  */
+  const root = document.querySelector<HTMLElement>('[data-intro]');
+
+  if (root) {
+    const switcher = root.querySelector<HTMLElement>('.intro__switch');
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-lang]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+
+    if (switcher && buttons.length > 1) {
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          buttons.forEach((b) =>
+            b.setAttribute('aria-pressed', String(b === button)),
+          );
+          panels.forEach((panel) => {
+            panel.hidden = panel.dataset.panel !== button.dataset.lang;
+          });
+        });
+      });
+
+      switcher.removeAttribute('hidden');
+    }
+  }
+</script>
+
 <style>
   .about {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+
+  .intro__switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  /* Both of these are required, not tidiness: `[hidden]`'s UA rule is
+     `display: none` at element specificity, which the class rules above and
+     below outrank. Without them the switch shows up with JavaScript off and
+     the inactive panel never disappears. */
+  .intro__switch[hidden],
+  .intro__panel[hidden] {
+    display: none;
+  }
+
+  .intro__lang {
+    padding: var(--sp-1) var(--sp-3);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-full);
+    background: transparent;
+    color: var(--c-ink-muted);
+    font: inherit;
+    font-size: var(--fs-sm);
+    line-height: 1.8;
+    cursor: pointer;
+  }
+
+  .intro__lang:hover {
+    border-color: var(--c-blue);
+    color: var(--c-blue);
+  }
+
+  /* Selected state hangs off aria-pressed — same contract as the Blogs filter
+     and the active nav link, so semantics and visuals cannot drift apart. */
+  .intro__lang[aria-pressed='true'] {
+    background: var(--c-blue-tint);
+    border-color: var(--c-blue-soft);
+    color: var(--c-blue);
+    font-weight: 600;
+  }
+
+  .intro__panel {
     display: flex;
     flex-direction: column;
     gap: var(--sp-6);
@@ -55,7 +227,13 @@ import { profile, skills } from '../../data/site';
     color: var(--c-ink);
   }
 
+  /* Tighter than the --sp-6 that separates the About blocks: consecutive
+     paragraphs of one bio belong closer together than the bio and the heading
+     that follows it. */
   .bio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
     color: var(--c-ink-muted);
   }
 

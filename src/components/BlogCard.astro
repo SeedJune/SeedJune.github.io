@@ -1,0 +1,133 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import TagList from './TagList.astro';
+import { formatDay, isoDay } from '../utils/date';
+import { blogSeries } from '../data/site';
+
+interface Props {
+  entry: CollectionEntry<'blogs'>;
+}
+
+const { entry } = Astro.props;
+const { title, date, summary, series, tags, cover, coverAlt } = entry.data;
+
+/* The tab bar filters on this attribute, so the label a reader sees and the
+   value the filter matches both come from the same id. */
+const seriesLabel =
+  blogSeries.find((s) => s.id === series)?.label ?? series;
+---
+
+<!-- The whole card is the link. Safe to do here, unlike ProjectCard, because
+     a post card has no second link inside it to nest. -->
+<a class="card" href={`/blog/${entry.id}/`} data-series={series}>
+  {
+    cover && (
+      <div class="card__media media">
+        <Image
+          src={cover}
+          alt={coverAlt}
+          widths={[240, 480]}
+          sizes="(max-width: 639px) calc(100vw - 40px), 200px"
+          format="webp"
+          quality={75}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    )
+  }
+
+  <div class="card__body">
+    <p class="card__meta">
+      <span class="card__series">{seriesLabel}</span>
+      <time datetime={isoDay(date)}>{formatDay(date)}</time>
+    </p>
+
+    <h3 class="card__title">{title}</h3>
+    <p class="card__summary">{summary}</p>
+
+    {tags.length > 0 && <TagList tags={tags} tone="blue" />}
+  </div>
+</a>
+
+<style>
+  .card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+    padding-block: var(--sp-6);
+    border-top: 1px solid var(--c-border);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Required, not decorative: the UA rule for [hidden] is `display: none` at
+     element specificity, which `.card { display: grid }` above outranks. With
+     this rule missing, the filter sets `hidden` and nothing disappears. */
+  .card[hidden] {
+    display: none;
+  }
+
+  /* The list sets this on the first *visible* card, which changes as the
+     filter changes — so the top rule never floats above a filtered list. */
+  .card[data-first] {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .card:hover .card__title {
+    color: var(--c-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .card__media {
+    --media-ratio: 16 / 9;
+    border-radius: var(--r-md);
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    min-width: 0;
+  }
+
+  .card__meta {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-3);
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .card__series {
+    color: var(--c-blue);
+    font-weight: 600;
+  }
+
+  .card__title {
+    font-size: var(--fs-base);
+    color: var(--c-ink);
+  }
+
+  .card__summary {
+    color: var(--c-ink-muted);
+    font-size: var(--fs-sm);
+  }
+
+  @media (min-width: 640px) {
+    .card {
+      grid-template-columns: 200px minmax(0, 1fr);
+      align-items: start;
+    }
+
+    /* A card with no cover should not leave a 200px hole where one would be. */
+    .card:not(:has(.card__media)) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
