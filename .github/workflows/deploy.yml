@@ -7,8 +7,8 @@ name: Deploy to GitHub Pages
 # Until then the site is only deployed if you run this workflow by hand from
 # the Actions tab, so pushing code never publishes anything by accident.
 on:
-  # push:
-  #   branches: [main]
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
