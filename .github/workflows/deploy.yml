@@ -1,11 +1,10 @@
 name: Deploy to GitHub Pages
 
-# TO GO LIVE, two steps:
-#   1. Repo Settings -> Pages -> Build and deployment -> Source: "GitHub Actions"
-#   2. Uncomment the `push` trigger below, commit, and push.
+# Every push to main publishes the site. It can also be run by hand from the
+# Actions tab (workflow_dispatch) — useful for re-deploying without a commit.
 #
-# Until then the site is only deployed if you run this workflow by hand from
-# the Actions tab, so pushing code never publishes anything by accident.
+# Requires: Repo Settings -> Pages -> Build and deployment -> Source:
+# "GitHub Actions".
 on:
   push:
     branches: [main]
@@ -29,11 +28,18 @@ jobs:
 
       # Detects pnpm from pnpm-lock.yaml, installs, runs `astro build`,
       # and uploads dist/ as the Pages artifact.
+      #
+      # `package-manager` is deliberately NOT set. Setting it makes this action
+      # pass an explicit --version to pnpm/action-setup, which then refuses to
+      # run because package.json already pins one via "packageManager" — it
+      # rejects having two sources at all, even when they agree. Left unset,
+      # the action finds pnpm-lock.yaml, sees the packageManager field, and
+      # passes no version, so CI installs exactly the pnpm that field names.
+      # Change the pnpm version in package.json, never here.
       - name: Build site
         uses: withastro/action@v6
         with:
           node-version: 24
-          package-manager: pnpm@latest
 
   deploy:
     needs: build
