@@ -143,6 +143,10 @@ export const blogSeries = [
   {id: 'world model', label: 'World Models'},
   { id: 'csapp', label: 'CSAPP Notes' },
   { id: 'books and movies', label: 'Books & Movies' },
+  /* Catch-all. Keep it last so it reads as the leftover bucket rather than a
+     topic, and so a post never sits unpublishable just because it does not fit
+     an existing series. A tab only appears once a post actually uses it. */
+  { id: 'other', label: 'Other' },
 ] as const;
 
 /* Used for <title>, meta description, Open Graph, and the sitemap. */

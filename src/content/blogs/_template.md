@@ -12,10 +12,13 @@ title: 'Post title'
 date: 2026-01-01
 summary: 'One or two sentences. Shown on the card and used as the page description for search engines.'
 
-# Which series this belongs to. Must be one of the ids in `blogSeries`
-# in src/data/site.ts — currently: tech | research | life
-# A typo here fails the build and names this file.
-series: 'tech'
+# Which series this belongs to. Must be one of the `id` values in `blogSeries`
+# in src/data/site.ts — open that file and copy one; the ids are not repeated
+# here on purpose, because a copy of the list here WILL go stale the first time
+# you rename a series (it already did once, which is why this line now defaults
+# to the catch-all). A value that is not in the list fails the build and names
+# this file.
+series: 'other'
 
 tags: []
 

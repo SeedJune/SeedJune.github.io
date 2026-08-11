@@ -12,10 +12,13 @@ title: 'Post title'
 date: 2026-01-01
 summary: 'One or two sentences. Shown on the card and used as the page description for search engines.'
 
-# Which series this belongs to. Must be one of the ids in `blogSeries`
-# in src/data/site.ts — currently: tech | research | life
-# A typo here fails the build and names this file.
-series: 'tech'
+# Which series this belongs to. Must be one of the `id` values in `blogSeries`
+# in src/data/site.ts — open that file and copy one; the ids are not repeated
+# here on purpose, because a copy of the list here WILL go stale the first time
+# you rename a series (it already did once, which is why this line now defaults
+# to the catch-all). A value that is not in the list fails the build and names
+# this file.
+series: 'other'
 
 tags: []
 
@@ -24,7 +27,9 @@ tags: []
 # coverAlt: 'What the image shows, for screen readers.'
 
 # true = keeps the file but publishes nothing, not even the URL.
-draft: false
+# Set to true because this file is still an unedited copy of the template.
+# Flip to false once the title, date, summary, series and body are real.
+draft: true
 ---
 
 Write the article here in Markdown.
