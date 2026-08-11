@@ -9,7 +9,7 @@ const publications = (await getCollection('publications'))
   .sort((a, b) => b.data.year - a.data.year);
 ---
 
-<Section id="publications" title="Publications" accent="blue">
+<Section id="publications" title="Publications" accent="pink">
   {
     publications.length === 0 ? (
       <EmptyState

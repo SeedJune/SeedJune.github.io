@@ -10,7 +10,7 @@ tags: ['Board game', 'Minimax algorithm']
 cover: ../../assets/projects/chinese_checkers.png
 # coverAlt: 'What the image shows, for screen readers.'
 repo: https://github.com/SeedJune/Chinese-checkers
-# demo: https://example.com
+demo: https://huggingface.co/spaces/jycjycPKU/Chinese-checkers
 draft: false
 ---
 

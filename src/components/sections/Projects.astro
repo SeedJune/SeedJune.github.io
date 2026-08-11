@@ -9,7 +9,7 @@ const projects = (await getCollection('projects'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
-<Section id="projects" title="Projects" accent="blue">
+<Section id="projects" title="Projects" accent="pink" collapsible>
   {
     projects.length === 0 ? (
       <EmptyState

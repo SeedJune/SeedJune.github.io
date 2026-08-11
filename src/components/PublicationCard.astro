@@ -117,13 +117,24 @@ const links = [
     font-size: var(--fs-sm);
   }
 
+  /*
+    The one place on the site where a link is pink instead of blue, so that
+    this section matches its pink heading rule. It is a deliberate exception to
+    "pink never on anything clickable" — see the note in global.css.
+
+    What keeps it usable: colour is not the only thing marking these as links.
+    They carry an underline (the border below) and the `ext` arrow, so someone
+    who cannot separate the two hues still sees a link. #a63d62 is 6.06:1 on
+    white and #f0a0bd is 10.47:1 on black, both past AA.
+  */
   .pub__links a {
+    color: var(--c-pink);
     text-decoration: none;
-    border-bottom: 1px solid var(--c-blue-soft);
+    border-bottom: 1px solid var(--c-pink-soft);
   }
 
   .pub__links a:hover {
-    border-bottom-color: var(--c-blue);
+    border-bottom-color: var(--c-pink);
   }
 
   @media (min-width: 640px) {

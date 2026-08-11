@@ -25,13 +25,17 @@ prose is a Markdown file; anything that is a short list is a TypeScript array.**
 | Name, bio, research interests, skills, social links | `src/data/site.ts` |
 | News items | `src/data/site.ts` → `news` |
 | Education, research/internships, awards | `src/data/site.ts` |
-| Projects | `src/content/projects/*.md` |
-| Tools | `src/content/tools/*.md` |
+| Projects (incl. playable demos) | `src/content/projects/*.md` |
 | Blog posts | `src/content/blogs/*.md` |
 | Blog series (the filter tabs) | `src/data/site.ts` → `blogSeries` |
 | Photos | `src/content/gallery/*.md` |
 | Publications | `src/content/publications/*.md` |
-| Images | `src/assets/{profile,projects,tools,blogs,gallery}/` |
+| Images | `src/assets/{profile,projects,blogs,gallery,publications}/` |
+
+A project carries two optional links: `repo` renders a **Code** link, `demo`
+renders a **Demo** link. Either, both, or neither — the small interactive
+things that used to live in a separate Tools section are just projects with a
+`demo` and no `repo`.
 
 ### Adding one of something
 
@@ -89,12 +93,26 @@ frontmatter-only and renders as a card on the home page.
 The palette runs on two axes, documented in full at the top of
 `src/styles/global.css`:
 
-- **Blue** — academic and clickable. Links, active nav, project tags, sidebar.
-- **Pink** — personal. Avatar ring, gallery accents, hobby tags.
+- **Blue** — academic and clickable. Links, active nav, project tags, blog
+  filter chips, sidebar, and the heading rules on About / News / Experience /
+  Blogs.
+- **Pink** — personal. Avatar ring, gallery accents, hobby tags, and the
+  heading rules on Publications / Projects / Gallery.
+
+Section heading rules alternate blue/pink from News downwards purely for
+rhythm; `accent` colours that 2px rule and nothing else. Only the About/News
+repeat breaks the pattern, because seven sections cannot alternate perfectly
+when the first and last differ.
 
 Pink never appears on anything clickable. The pale `-soft` / `-tint` shades are
 decorative fills only and never carry text — every text-bearing accent clears
 WCAG AA on white.
+
+News, Projects, Blogs and Gallery are collapsible — `Section.astro` takes a
+`collapsible` prop (and an `open` prop, defaulting to `true`) and wraps the body
+in `<details>`/`<summary>`. No script is involved: it works with JavaScript off,
+the browser supplies the button role and `aria-expanded`, and the content stays
+in the DOM so anchors and indexing are unaffected.
 
 Gallery cards are deliberately **not** clickable: `PhotoCard.astro` renders a
 `<figure>` with no link, no tabindex, and no hover state. Everything a visitor

@@ -9,7 +9,7 @@ const photos = (await getCollection('gallery'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
-<Section id="gallery" title="Gallery" accent="pink">
+<Section id="gallery" title="Gallery" accent="pink" collapsible>
   {
     photos.length === 0 ? (
       <EmptyState

@@ -9,8 +9,13 @@ tags: ['tag one', 'tag two']
 # Delete both cover lines if there is no image.
 # cover: ../../assets/projects/your-image.png
 # coverAlt: 'What the image shows, for screen readers.'
+# Two independent links, both optional. Keep whichever applies:
+#   repo -> shows a "Code" link   (source on GitHub)
+#   demo -> shows a "Demo" link   (something you can open and play with,
+#                                  e.g. a Hugging Face Space)
+# With neither, the link row simply is not rendered.
 # repo: https://github.com/SeedJune/your-repo
-# demo: https://example.com
+# demo: https://huggingface.co/spaces/your-name/your-space
 draft: false
 ---
 

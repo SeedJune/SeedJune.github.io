@@ -24,25 +24,12 @@ const projects = defineCollection({
       tags: z.array(z.string()).default([]),
       cover: image().optional(),
       coverAlt: z.string().default(''),
+      /* Both optional and independent: a project can have source only, a live
+         demo only, both, or neither. The card renders whichever links exist —
+         "Code" for `repo`, "Demo" for `demo` — and drops the row entirely when
+         there are none. `demo` is what the old Tools section used to be. */
       repo: z.url().optional(),
       demo: z.url().optional(),
-      draft: z.boolean().default(false),
-    }),
-});
-
-const tools = defineCollection({
-  loader: glob({ pattern, base: './src/content/tools' }),
-  schema: ({ image }) =>
-    z.object({
-      title: z.string(),
-      summary: z.string(),
-      /* Optional so a tool can sit here before it is deployed anywhere.
-         Without a url the card renders, but is not a link. */
-      url: z.url().optional(),
-      tags: z.array(z.string()).default([]),
-      cover: image().optional(),
-      coverAlt: z.string().default(''),
-      order: z.number().default(0),
       draft: z.boolean().default(false),
     }),
 });
@@ -108,4 +95,4 @@ const blogs = defineCollection({
     }),
 });
 
-export const collections = { projects, tools, gallery, publications, blogs };
+export const collections = { projects, gallery, publications, blogs };

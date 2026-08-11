@@ -1,17 +1,59 @@
 /* ==========================================================================
    Design tokens
    --------------------------------------------------------------------------
-   Two accent axes, used consistently so the palette reads intentional:
+   Two accent axes. They started out meaning "work" vs "personal"; they now
+   also drive the page's blue/pink section rhythm, so a section's colour is
+   chosen for where it sits as much as for what it holds.
 
-     BLUE  = the academic / clickable axis.
-             Sidebar surface, links, active nav, project tags, section rules
-             on About / News / Publications / Experience / Projects / Tools.
-             If it is blue, it is either work or you can click it.
+     BLUE  = the academic axis.
+             Sidebar surface, nav, body links, blog series labels and filter
+             chips, About's interest bullets and Skills tags.
+             Sections: About / News / Experience / Blogs.
 
      PINK  = the personal / human axis.
-             Avatar ring, Gallery section rule, photo-card meta strip,
-             hobby tags, footer mark.
-             Pink NEVER appears on anything clickable.
+             Avatar ring, footer mark, About's hobby tags, photo-card caption
+             strips, publication and project tags, and the links on those two
+             cards.
+             Sections: Publications / Projects / Gallery.
+
+   HOW A SECTION PICKS ITS SIDE
+   ----------------------------
+   Reading top to bottom the page alternates, which is the whole point:
+
+       About   blue    <- fixed
+       News    blue  \
+       Pubs    pink   |
+       Exp     blue   |  strict alternation from News down
+       Proj    pink   |
+       Blogs   blue   |
+       Gallery pink  /  <- fixed (its photo caption strips are pink)
+
+   The About/News repeat is forced, not an oversight: seven sections can only
+   alternate perfectly if the first and last share a colour, and here they do
+   not. The repeat is parked at the top so the alternation below it is exact.
+
+   A section commits fully. `accent` colours the 2px rule after the heading,
+   and everything decorative inside the section follows it — tags, card hover
+   borders, the underline on Code / Demo / PDF links. A section that is pink at
+   the top and blue in the middle looks like a bug, so this is all-or-nothing.
+
+   THE ONE HARD RULE THAT SURVIVES
+   -------------------------------
+   Colour must never be the ONLY thing carrying meaning (WCAG 1.4.1). That is
+   why the pink links are still safe: every one of them keeps its underline and
+   its trailing arrow, so a reader who cannot separate the hues still sees a
+   link. Anything that becomes pink must keep a non-colour affordance.
+
+   What stays blue no matter what: the blog filter chips (real <button>s whose
+   pressed state is signalled partly by fill), the nav's active marker, and the
+   global :focus-visible ring. A focus ring that changes colour per section is
+   harder to follow, and those chips are the only controls on the page whose
+   state has nowhere else to live.
+
+   (Historical note for anyone reading old comments: project tags were once
+   described here as clickable controls. They are not — TagList renders plain
+   <li> elements. That mistake is why they were left blue longer than the
+   design wanted.)
 
    The `-soft` and `-tint` shades are decorative fills ONLY. They never carry
    text and never form a focus ring. Every text-bearing accent uses --c-blue

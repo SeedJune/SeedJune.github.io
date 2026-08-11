@@ -4,16 +4,67 @@ interface Props {
   title: string;
   /** Which accent axis this section belongs to. See src/styles/global.css. */
   accent?: 'blue' | 'pink';
+  /**
+   * Lets the reader fold the section away. Built on <details>/<summary>, so
+   * there is no script involved: it keeps working with JavaScript off, the
+   * browser supplies the button role and aria-expanded, and the content stays
+   * in the DOM (still indexed, still reachable by the nav's anchor links).
+   */
+  collapsible?: boolean;
+  /**
+   * Only meaningful together with `collapsible`. Open by default on purpose —
+   * a first-time visitor should never have to discover that there is content
+   * hidden behind a heading. Pass `open={false}` to start folded.
+   */
+  open?: boolean;
 }
 
-const { id, title, accent = 'blue' } = Astro.props;
+const {
+  id,
+  title,
+  accent = 'blue',
+  collapsible = false,
+  open = true,
+} = Astro.props;
 ---
 
 <section id={id} class:list={['section', `section--${accent}`]}>
-  <h2 class="section__title">{title}</h2>
-  <div class="section__body">
-    <slot />
-  </div>
+  {
+    collapsible ? (
+      <details class="section__details" open={open}>
+        <summary class="section__summary">
+          {/* An h2 is allowed inside <summary>, so folding a section costs
+              nothing in the document outline — the heading is still a heading
+              to a screen reader and to the nav's scroll-spy. */}
+          <h2 class="section__title">{title}</h2>
+          <svg
+            class="section__chevron"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </summary>
+        <div class="section__body">
+          <slot />
+        </div>
+      </details>
+    ) : (
+      <Fragment>
+        <h2 class="section__title">{title}</h2>
+        <div class="section__body">
+          <slot />
+        </div>
+      </Fragment>
+    )
+  }
 </section>
 
 <style>
@@ -49,6 +100,59 @@ const { id, title, accent = 'blue' } = Astro.props;
 
   .section--pink {
     --accent-soft: var(--c-pink-soft);
+  }
+
+  /* ---- collapsible variant ---------------------------------------------- */
+
+  .section__summary {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    cursor: pointer;
+
+    /* Kill the default disclosure triangle in favour of our own chevron.
+       Both lines are needed: `list-style` covers Firefox and Chrome, the
+       ::-webkit- pseudo-element covers Safari. */
+    list-style: none;
+  }
+
+  .section__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* The gap under the heading belongs to the open state only — left on the
+     title it would hang below a folded section as unexplained empty space. */
+  .section__summary .section__title {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+
+  .section__details[open] > .section__summary {
+    margin-bottom: var(--sp-6);
+  }
+
+  .section__chevron {
+    flex: none;
+    color: var(--c-ink-faint);
+    transition: transform 0.15s ease;
+  }
+
+  .section__summary:hover .section__chevron {
+    color: var(--c-blue);
+  }
+
+  /* Points down when folded ("open me"), up when expanded ("fold me"). */
+  .section__details[open] .section__chevron {
+    transform: rotate(180deg);
+  }
+
+  /* The whole summary row is the hit target, so the focus ring has to wrap the
+     row rather than the heading text alone. */
+  .section__summary:focus-visible {
+    outline: 2px solid var(--c-blue);
+    outline-offset: 4px;
+    border-radius: var(--r-sm);
   }
 
   @media (min-width: 900px) {

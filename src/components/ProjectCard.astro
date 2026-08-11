@@ -38,7 +38,7 @@ const year = date.getFullYear();
 
     <p class="card__summary">{summary}</p>
 
-    <TagList tags={tags} tone="blue" />
+    <TagList tags={tags} tone="pink" />
 
     {
       (repo || demo) && (
@@ -72,7 +72,7 @@ const year = date.getFullYear();
   }
 
   .card:hover {
-    border-color: var(--c-blue-soft);
+    border-color: var(--c-pink-soft);
   }
 
   .card__media {
@@ -117,13 +117,23 @@ const year = date.getFullYear();
     font-size: var(--fs-sm);
   }
 
+  /*
+    Pink like the rest of this section, matching PublicationCard. The tags just
+    above these links are pink too, so leaving the links blue would put both
+    accents inside one card — worse than either choice on its own.
+
+    Same safeguard as the publication links: the underline and the `ext` arrow
+    mark these as links independently of hue, so nothing is conveyed by colour
+    alone. 5.51:1 / 9.14:1 for the tags, both themes past AA.
+  */
   .card__links a {
+    color: var(--c-pink);
     text-decoration: none;
-    border-bottom: 1px solid var(--c-blue-soft);
+    border-bottom: 1px solid var(--c-pink-soft);
   }
 
   .card__links a:hover {
-    border-bottom-color: var(--c-blue);
+    border-bottom-color: var(--c-pink);
   }
 
   @media (min-width: 640px) {

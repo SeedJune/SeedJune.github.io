@@ -9,7 +9,7 @@
 # read has to be in `title`, `date`, `location`, and `note`.
 
 title: 'The sun rise of Mount Tai'
-date: 2026-01-01
+date: 2024-04-27
 location: 'Tai''an, China' # optional — omit the line and it is not shown
 note: 'Mount Tai, the foremost of China’s Five Great Mountains.' # optional
 photo: ../../assets/gallery/tai-mount.jpg
