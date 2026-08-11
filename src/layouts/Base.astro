@@ -108,9 +108,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         min-width: 0;
       }
 
-      /* Content is left-aligned inside the column; only the column is placed. */
+      /* Content is left-aligned inside the column; only the column is placed.
+
+         --w-main lets a page opt into a wider column than the reading measure.
+         Blog posts do, because an article carries diagrams and code that a
+         720px column strangles; everything else inherits --w-content. */
       .main > :global(*) {
-        max-width: var(--w-content);
+        max-width: var(--w-main, var(--w-content));
       }
 
       @media (min-width: 900px) {

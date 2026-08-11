@@ -76,7 +76,12 @@ const links = [
     border-top: 1px solid var(--c-border);
   }
 
-  .pub:first-child {
+  .pub[hidden] {
+    display: none;
+  }
+
+  .pub:first-child,
+  .pub[data-first] {
     border-top: none;
     padding-top: 0;
   }

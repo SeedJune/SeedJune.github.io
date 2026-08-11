@@ -94,12 +94,23 @@ const {
     background: var(--accent-soft);
   }
 
+  /*
+    The accent is published as three variables rather than used directly, so
+    anything inside the section can pick it up — the heading rule below, and
+    the pager controls. That is what keeps a pager the same colour as the
+    heading above it even after the blue/pink assignment is reshuffled: there
+    is one place that decides, and it is the `accent` prop.
+  */
   .section--blue {
+    --accent: var(--c-blue);
     --accent-soft: var(--c-blue-soft);
+    --accent-tint: var(--c-blue-tint);
   }
 
   .section--pink {
+    --accent: var(--c-pink);
     --accent-soft: var(--c-pink-soft);
+    --accent-tint: var(--c-pink-tint);
   }
 
   /* ---- collapsible variant ---------------------------------------------- */
@@ -138,8 +149,11 @@ const {
     transition: transform 0.15s ease;
   }
 
+  /* Follows the section's accent for the same reason the pager does. The
+     focus ring below deliberately does not — a focus indicator that changes
+     colour per section is harder to track across a page. */
   .section__summary:hover .section__chevron {
-    color: var(--c-blue);
+    color: var(--accent, var(--c-blue));
   }
 
   /* Points down when folded ("open me"), up when expanded ("fold me"). */

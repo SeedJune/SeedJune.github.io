@@ -6,6 +6,12 @@ import TagList from '../../components/TagList.astro';
 import { formatDay, isoDay } from '../../utils/date';
 import { blogSeries } from '../../data/site';
 
+/* KaTeX's stylesheet, imported here rather than in global.css so the home page
+   does not carry it. Vite rewrites the font URLs inside it and emits the woff2
+   files alongside the rest of the build, so the maths fonts are served from
+   this domain — no CDN, nothing to go down or to leak a visitor's IP. */
+import 'katex/dist/katex.min.css';
+
 /* One page per published post. Drafts get no page at all — not a hidden one,
    no page — so an unfinished post cannot be reached by guessing its URL. */
 export async function getStaticPaths() {
@@ -131,6 +137,24 @@ const seriesLabel = blogSeries.find((s) => s.id === series)?.label ?? series;
      place on the site where raw Markdown becomes the page, so the defaults
      have to be put back. :global because the markup comes from <Content />.
      ------------------------------------------------------------------ */
+  /*
+    One width for everything in the article — text, images, code, formulas all
+    share the same left and right edge. An earlier version let images break out
+    wider than the text; it gave images room but produced two competing column
+    edges down the page, which read as a mistake rather than as emphasis.
+
+    900px is the compromise: wide enough that a diagram is legible and the
+    right-hand gap is no longer conspicuous, narrow enough that a line of text
+    stays scannable. It is a single number — tune it here and text and images
+    move together, which is the whole point.
+
+    Below 900px + padding the column is simply narrower than this cap, so the
+    article is fluid on every screen down to a phone without a media query.
+  */
+  .post {
+    --w-main: 900px;
+  }
+
   .prose {
     color: var(--c-ink);
   }
@@ -210,6 +234,59 @@ const seriesLabel = blogSeries.find((s) => s.id === series)?.label ?? series;
     padding: var(--sp-2) var(--sp-3);
     border: 1px solid var(--c-border);
     text-align: left;
+  }
+
+  /*
+    A display formula is one long unbreakable line. On a phone the widest ones
+    here (the chain-rule expansion of the reparameterisation gradient) are far
+    wider than the column, and without this they would push the whole page
+    sideways. Scrolling the formula alone keeps the body text where it is.
+
+    overflow-y stays hidden: `auto` on both axes makes some browsers reserve
+    room for a horizontal scrollbar and clip tall fractions.
+  */
+  .prose :global(.katex-display) {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-block: 0.25rem;
+  }
+
+  /* ---- footnotes ------------------------------------------------------
+     GitHub-flavoured Markdown turns `[^1]` into a superscript link and
+     collects the definitions into <section class="footnotes"> at the end of
+     the document, with backlinks. None of it is styled by default here. */
+
+  /*
+     GFM labels that section with <h2 class="sr-only">Footnotes</h2>. This
+     project had no .sr-only rule, so that heading rendered as a full-size
+     heading. Hiding it visually while leaving it for screen readers is what
+     the class means, and it is how GitHub itself renders the block: a rule
+     and a numbered list, no visible label.
+  */
+  .prose :global(.sr-only) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .prose :global(.footnotes) {
+    margin-top: var(--sp-8);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--c-border);
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+  }
+
+  /* Jumping to a note from the superscript would otherwise land it flush
+     against the top edge of the window. */
+  .prose :global(.footnotes li) {
+    scroll-margin-top: var(--sp-8);
   }
 
   .prose :global(hr) {

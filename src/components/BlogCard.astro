@@ -71,6 +71,8 @@ const seriesLabel =
 
   /* The list sets this on the first *visible* card, which changes as the
      filter changes — so the top rule never floats above a filtered list. */
+  /* :first-child for the no-JS case, [data-first] for the paged one. */
+  .card:first-child,
   .card[data-first] {
     border-top: none;
     padding-top: 0;

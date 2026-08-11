@@ -1,0 +1,202 @@
+---
+/**
+ * Client-side pagination for the home page's long lists.
+ *
+ * Why client-side: every one of these sections lives on the same page, and the
+ * nav scroll-spy and the `/#projects` anchors depend on that. Astro's
+ * `paginate()` would give each page its own URL and break both. So the whole
+ * list ships in the HTML — search engines and no-JS visitors get everything —
+ * and script only decides which slice is on screen.
+ *
+ * Usage: wrap the list, mark the list element, pick a size.
+ *
+ *   <Pager size={4} label="projects">
+ *     <div class="list" data-pager-list>…items…</div>
+ *   </Pager>
+ *
+ * The items must be the direct children of [data-pager-list].
+ *
+ * Filtering: a section that also filters (Blogs) must not touch `hidden` —
+ * that belongs to the pager, and two owners would fight. It sets
+ * `data-match="0"` on excluded items instead and fires `pager:refresh` on the
+ * root; the pager then repaginates whatever is left.
+ */
+
+interface Props {
+  /** Items per page. Picked per section from how tall one item is. */
+  size: number;
+  /** Names the list for screen readers, e.g. "Projects". Used as "<label> pagination". */
+  label: string;
+}
+
+const { size, label } = Astro.props;
+---
+
+<div class="paged" data-pager data-page-size={size}>
+  <slot />
+  <nav class="pager" data-pager-nav aria-label={`${label} pagination`} hidden></nav>
+</div>
+
+<script>
+  /*
+    One script for every pager on the page — Astro bundles a component's script
+    once no matter how many times the component is used, so this runs a single
+    time and adopts each [data-pager] it finds.
+  */
+  const roots = document.querySelectorAll<HTMLElement>('[data-pager]');
+
+  for (const root of roots) {
+    const list = root.querySelector<HTMLElement>('[data-pager-list]');
+    const nav = root.querySelector<HTMLElement>('[data-pager-nav]');
+    if (!list || !nav) continue;
+
+    const size = Number(root.dataset.pageSize) || 10;
+    const items = [...list.children] as HTMLElement[];
+    let page = 1;
+
+    /* Everything a filter has not excluded. Without a filter this is all of
+       them, which is why unfiltered sections need no extra wiring. */
+    const eligible = () => items.filter((i) => i.dataset.match !== '0');
+
+    const button = (
+      text: string,
+      to: number,
+      opts: { disabled?: boolean; current?: boolean } = {},
+    ) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pager__btn';
+      b.textContent = text;
+      if (opts.disabled) b.disabled = true;
+      /* aria-current is what tells a screen reader which page it is on; the
+         highlight hangs off the same attribute so the two cannot drift. */
+      if (opts.current) b.setAttribute('aria-current', 'page');
+      b.addEventListener('click', () => {
+        page = to;
+        render();
+        /* Changing page under the fold would otherwise leave the reader
+           stranded mid-list looking at unrelated content. */
+        root.closest('section')?.scrollIntoView({ block: 'start' });
+      });
+      return b;
+    };
+
+    /*
+      An arrow function bound to a const, not `function render()`. A function
+      declaration is hoisted above the `if (!list || !nav) continue` guard, so
+      TypeScript has to assume it could run before the guard and refuses to
+      narrow `nav` away from null inside it. Declaring it here, after the
+      guard, keeps the narrowing.
+    */
+    const render = () => {
+      const shown = eligible();
+      const pages = Math.max(1, Math.ceil(shown.length / size));
+      if (page > pages) page = pages;
+
+      /* The pager is the only thing that sets `hidden` here. */
+      for (const item of items) {
+        item.hidden = true;
+        item.removeAttribute('data-first');
+      }
+
+      const start = (page - 1) * size;
+      const onPage = shown.slice(start, start + size);
+      for (const item of onPage) item.hidden = false;
+
+      /* Several cards drop their top border when they are first in the list.
+         After paging, "first" means first on this page, not first in the
+         markup — see the [data-first] rules in the card components. */
+      onPage[0]?.setAttribute('data-first', '');
+
+      nav.replaceChildren();
+      nav.hidden = pages < 2;
+      if (pages < 2) return;
+
+      nav.append(button('‹', page - 1, { disabled: page === 1 }));
+      for (let n = 1; n <= pages; n++) {
+        nav.append(button(String(n), n, { current: n === page }));
+      }
+      nav.append(button('›', page + 1, { disabled: page === pages }));
+    };
+
+    /* A filter changed what is eligible: start again from page one, because
+       page 3 of the old list is meaningless in the new one. */
+    root.addEventListener('pager:refresh', () => {
+      page = 1;
+      render();
+    });
+
+    render();
+  }
+</script>
+
+<style>
+  .paged {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+
+  .pager {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    align-items: center;
+    /* Centred under the list. Left-aligned it read as a stray leftover of the
+       list rather than as a control for it. */
+    justify-content: center;
+  }
+
+  /* Same trap as .filters[hidden] in Blogs.astro and .card[hidden] in the card
+     components: `display: flex` above outranks the UA's [hidden] rule, so
+     without this the controls stay on screen with JavaScript off. */
+  .pager[hidden] {
+    display: none;
+  }
+
+  /*
+    Coloured from --accent, which Section.astro sets from its `accent` prop, so
+    the controls always match the heading rule of the section they belong to —
+    blue under News and Blogs, pink under Publications, Projects and Gallery.
+    The fallback covers a Pager used outside a Section.
+
+    Every button rule below is written `.pager :global(.pager__btn)`, and it has
+    to be. These buttons are built by the script with createElement, so they
+    never receive Astro's data-astro-cid-* scoping attribute — a plain
+    `.pager__btn` rule compiles to `.pager__btn[data-astro-cid-…]` and matches
+    nothing, leaving the browser's default black-on-grey button. The `.pager`
+    ancestor is still scoped, so this stays contained to this component.
+  */
+  .pager :global(.pager__btn) {
+    min-width: 2rem;
+    padding: var(--sp-1) var(--sp-2);
+    border: 1px solid var(--accent-soft, var(--c-border));
+    border-radius: var(--r-sm);
+    background: transparent;
+    color: var(--accent, var(--c-blue));
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.6;
+    cursor: pointer;
+  }
+
+  .pager :global(.pager__btn:hover:not(:disabled)) {
+    border-color: var(--accent, var(--c-blue));
+    background: var(--accent-tint, var(--c-blue-tint));
+  }
+
+  /* The current page is a filled chip, the same shape the Blogs filter uses
+     for its selected series — one visual language for "this one is active". */
+  .pager :global(.pager__btn[aria-current]) {
+    background: var(--accent-tint, var(--c-blue-tint));
+    border-color: var(--accent, var(--c-blue));
+    color: var(--accent, var(--c-blue));
+    font-weight: 600;
+  }
+
+  .pager :global(.pager__btn:disabled) {
+    opacity: 0.4;
+    cursor: default;
+  }
+</style>

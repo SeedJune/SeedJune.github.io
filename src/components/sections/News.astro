@@ -1,6 +1,7 @@
 ---
 import Section from '../Section.astro';
 import EmptyState from '../EmptyState.astro';
+import Pager from '../Pager.astro';
 import { news } from '../../data/site';
 import { formatMonth } from '../../utils/date';
 ---
@@ -13,14 +14,16 @@ import { formatMonth } from '../../utils/date';
         hint="Add entries to the `news` array in src/data/site.ts — newest first."
       />
     ) : (
-      <ul class="news">
-        {news.map((item) => (
-          <li class="news__item">
-            <span class="news__date">{formatMonth(item.date)}</span>
-            <span class="news__text">{item.text}</span>
-          </li>
-        ))}
-      </ul>
+      <Pager size={8} label="News">
+        <ul class="news" data-pager-list>
+          {news.map((item) => (
+            <li class="news__item">
+              <span class="news__date">{formatMonth(item.date)}</span>
+              <span class="news__text">{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </Pager>
     )
   }
 </Section>
@@ -39,7 +42,16 @@ import { formatMonth } from '../../utils/date';
     border-top: 1px solid var(--c-border);
   }
 
-  .news__item:first-child {
+  /* `hidden` is set by the pager; `display: grid` above would beat the UA
+     rule, so it has to be restated. */
+  .news__item[hidden] {
+    display: none;
+  }
+
+  /* :first-child covers the no-JS case, [data-first] the paged one — on page
+     two the markup's first child is hidden, so the two never collide. */
+  .news__item:first-child,
+  .news__item[data-first] {
     border-top: none;
     padding-top: 0;
   }

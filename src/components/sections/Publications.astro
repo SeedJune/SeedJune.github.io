@@ -3,13 +3,14 @@ import { getCollection } from 'astro:content';
 import Section from '../Section.astro';
 import EmptyState from '../EmptyState.astro';
 import PublicationCard from '../PublicationCard.astro';
+import Pager from '../Pager.astro';
 
 const publications = (await getCollection('publications'))
   .filter((entry) => !entry.data.draft)
   .sort((a, b) => b.data.year - a.data.year);
 ---
 
-<Section id="publications" title="Publications" accent="pink">
+<Section id="publications" title="Publications" accent="pink" collapsible>
   {
     publications.length === 0 ? (
       <EmptyState
@@ -17,11 +18,13 @@ const publications = (await getCollection('publications'))
         hint="Copy src/content/publications/_template.md, rename it without the underscore, and fill it in."
       />
     ) : (
-      <div class="list">
-        {publications.map((entry) => (
-          <PublicationCard entry={entry} />
-        ))}
-      </div>
+      <Pager size={4} label="Publications">
+        <div class="list" data-pager-list>
+          {publications.map((entry) => (
+            <PublicationCard entry={entry} />
+          ))}
+        </div>
+      </Pager>
     )
   }
 </Section>

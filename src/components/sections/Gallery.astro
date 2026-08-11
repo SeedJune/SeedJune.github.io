@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Section from '../Section.astro';
 import EmptyState from '../EmptyState.astro';
 import PhotoCard from '../PhotoCard.astro';
+import Pager from '../Pager.astro';
 
 const photos = (await getCollection('gallery'))
   .filter((entry) => !entry.data.draft)
@@ -17,11 +18,13 @@ const photos = (await getCollection('gallery'))
         hint="Drop an image into src/assets/gallery/, then copy src/content/gallery/_template.md, rename it without the underscore, and point `photo:` at your image."
       />
     ) : (
-      <div class="grid">
-        {photos.map((entry) => (
-          <PhotoCard entry={entry} />
-        ))}
-      </div>
+      <Pager size={4} label="Photos">
+        <div class="grid" data-pager-list>
+          {photos.map((entry) => (
+            <PhotoCard entry={entry} />
+          ))}
+        </div>
+      </Pager>
     )
   }
 </Section>

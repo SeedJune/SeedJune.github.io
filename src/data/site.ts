@@ -45,11 +45,18 @@ export const profile = {
 
 /* Shown as a short text list in the sidebar. Delete any line you do not want.
    Order here is the order on screen. */
-export const socials: { label: string; href: string }[] = [
-  { label: 'Email', href: 'mailto:yuchaojin99@gmail.com' },
-  { label: 'GitHub', href: 'https://github.com/SeedJune' },
-  { label: 'CSDN', href: 'https://blog.csdn.net/jycjn?type=blog' },
-  { label: 'RedNote', href: 'https://www.xiaohongshu.com/user/profile/6617f7ab00000000070064ca' },
+/* `icon` picks the glyph drawn in front of the label — see SocialIcon.astro
+   for the list it understands. It is optional: leave it off and the link gets
+   a generic chain-link glyph, so adding a new social never breaks the row. */
+export const socials: { label: string; href: string; icon?: string }[] = [
+  { label: 'Email', href: 'mailto:yuchaojin99@gmail.com', icon: 'email' },
+  { label: 'GitHub', href: 'https://github.com/SeedJune', icon: 'github' },
+  { label: 'CSDN', href: 'https://blog.csdn.net/jycjn?type=blog', icon: 'csdn' },
+  {
+    label: 'RedNote',
+    href: 'https://www.xiaohongshu.com/user/profile/6617f7ab00000000070064ca',
+    icon: 'rednote',
+  },
 ];
 
 /* Short dated updates. Newest first. Keep each to one sentence.
@@ -141,12 +148,14 @@ export const skills = {
 export const blogSeries = [
   {id: '3dgs', label: 'Gaussian Splatting'},
   {id: 'world model', label: 'World Models'},
-  { id: 'csapp', label: 'CSAPP Notes' },
-  { id: 'books and movies', label: 'Books & Movies' },
-  /* Catch-all. Keep it last so it reads as the leftover bucket rather than a
-     topic, and so a post never sits unpublishable just because it does not fit
-     an existing series. A tab only appears once a post actually uses it. */
-  { id: 'other', label: 'Other' },
+  {id: 'csapp', label: 'CSAPP Notes' },
+  {id: 'books and movies', label: 'Books & Movies' },
+  {id: 'math', label: 'Mathematics'},
+  {id: 'algorithm', label: 'Algorithms'},
+  {id: 'games', label: 'Games'},
+  {id: 'economics', label: 'Economics'},
+  {id: 'culture', label: 'Culture'},
+  {id: 'other', label: 'Others' },
 ] as const;
 
 /* Used for <title>, meta description, Open Graph, and the sitemap. */

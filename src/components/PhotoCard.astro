@@ -69,6 +69,10 @@ const { title, date, location, note, photo, alt, focal } = entry.data;
   /* Fixed ratio + cover means mixed portrait/landscape/square sources all
      render as identical boxes. `focal` in the frontmatter decides which part
      of a tall photo survives the crop. */
+  .photo[hidden] {
+    display: none;
+  }
+
   .photo__media {
     --media-ratio: 4 / 3;
     /* Never let the flex column squeeze the frame out of its ratio. */

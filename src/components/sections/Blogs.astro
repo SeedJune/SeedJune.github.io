@@ -3,20 +3,21 @@ import { getCollection } from 'astro:content';
 import Section from '../Section.astro';
 import EmptyState from '../EmptyState.astro';
 import BlogCard from '../BlogCard.astro';
+import Pager from '../Pager.astro';
 import { blogSeries } from '../../data/site';
 
 const posts = (await getCollection('blogs'))
   .filter((entry) => !entry.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-/* Only series that actually have posts become tabs. An empty tab is a dead
-   end — you click it and the list goes blank — so it is never rendered. */
-const tabs = blogSeries
-  .map((s) => ({
-    ...s,
-    count: posts.filter((p) => p.data.series === s.id).length,
-  }))
-  .filter((s) => s.count > 0);
+/* Every series gets a tab, including ones with nothing in them yet — the tab
+   bar doubles as a statement of what this blog is going to cover. The count
+   next to each label is what keeps that honest, and selecting an empty series
+   shows an explanation rather than a blank space where a list should be. */
+const tabs = blogSeries.map((s) => ({
+  ...s,
+  count: posts.filter((p) => p.data.series === s.id).length,
+}));
 ---
 
 <Section id="blogs" title="Blogs" accent="blue" collapsible>
@@ -44,11 +45,20 @@ const tabs = blogSeries
           ))}
         </div>
 
-        <div class="list" data-blog-list>
-          {posts.map((entry) => (
-            <BlogCard entry={entry} />
-          ))}
-        </div>
+        {/* Shown only when the chosen series has no posts. Without it, picking
+            an empty tab would leave the reader looking at nothing with no clue
+            whether the filter worked or the page broke. */}
+        <p class="blogs__none" data-blogs-none hidden>
+          Nothing in this series yet — it is on the list.
+        </p>
+
+        <Pager size={4} label="Posts">
+          <div class="list" data-pager-list>
+            {posts.map((entry) => (
+              <BlogCard entry={entry} />
+            ))}
+          </div>
+        </Pager>
       </div>
     )
   }
@@ -64,21 +74,27 @@ const tabs = blogSeries
 
   if (root) {
     const filters = root.querySelector<HTMLElement>('.filters');
+    const pager = root.querySelector<HTMLElement>('[data-pager]');
     const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
     const cards = [...root.querySelectorAll<HTMLElement>('[data-series]')];
 
-    /* The top border belongs to whichever card is currently first on screen,
-       not to whichever card happens to be first in the markup. */
-    const markFirstVisible = () => {
-      cards.forEach((card) => card.removeAttribute('data-first'));
-      cards.find((card) => !card.hidden)?.setAttribute('data-first', '');
-    };
+    /*
+      This marks cards in or out of the current series; it deliberately does
+      NOT touch `hidden` or `data-first`. Those belong to the pager, and two
+      owners writing the same property would mean whichever ran last won.
+      Announcing the change and letting the pager repaginate keeps one owner.
+    */
+    const none = root.querySelector<HTMLElement>('[data-blogs-none]');
 
     const apply = (want: string) => {
-      cards.forEach((card) => {
-        card.hidden = want !== 'all' && card.dataset.series !== want;
-      });
-      markFirstVisible();
+      let matches = 0;
+      for (const card of cards) {
+        const hit = want === 'all' || card.dataset.series === want;
+        card.dataset.match = hit ? '1' : '0';
+        if (hit) matches++;
+      }
+      if (none) none.hidden = matches > 0;
+      pager?.dispatchEvent(new CustomEvent('pager:refresh'));
     };
 
     buttons.forEach((button) => {
@@ -91,7 +107,6 @@ const tabs = blogSeries
     });
 
     filters?.removeAttribute('hidden');
-    markFirstVisible();
   }
 </script>
 
@@ -153,5 +168,21 @@ const tabs = blogSeries
   .list {
     display: flex;
     flex-direction: column;
+  }
+
+  .blogs__none {
+    padding: var(--sp-6);
+    border: 1px dashed var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-bg-tint);
+    color: var(--c-ink-muted);
+    font-size: var(--fs-sm);
+  }
+
+  /* Left as a block on purpose so the UA's [hidden] rule still wins, but
+     stated anyway — this file has been bitten twice by a display declaration
+     silently outranking [hidden]. */
+  .blogs__none[hidden] {
+    display: none;
   }
 </style>

@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Nav from './Nav.astro';
+import SocialIcon from './SocialIcon.astro';
 import { profile, socials, site } from '../data/site';
 import avatar from '../assets/profile/avatar.png';
 
@@ -47,7 +48,8 @@ const visibleSocials = socials.filter(
         isPlaceholder(s.href) ? (
           <li>
             <span class="pending" title="Add this URL in src/data/site.ts">
-              {s.label}
+              <SocialIcon name={s.icon} />
+              <span class="label">{s.label}</span>
             </span>
           </li>
         ) : (
@@ -57,7 +59,11 @@ const visibleSocials = socials.filter(
               rel="me noopener"
               target={s.href.startsWith('mailto:') ? undefined : '_blank'}
             >
-              {s.label}
+              {/* Purely decorative: the label right next to it already names
+                  the destination, so announcing the icon too would make a
+                  screen reader read every link twice. */}
+              <SocialIcon name={s.icon} />
+              <span class="label">{s.label}</span>
             </a>
           </li>
         ),
@@ -142,22 +148,40 @@ const visibleSocials = socials.filter(
     font-size: var(--fs-sm);
   }
 
+  .socials a,
+  .socials .pending {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
   .socials a {
     color: var(--c-ink-muted);
     text-decoration: none;
+  }
+
+  /* The underline goes on the label, not the link: on an inline-flex row a
+     border-bottom would run under the icon too and read as a box. */
+  .socials .label {
     border-bottom: 1px solid transparent;
   }
 
   .socials a:hover {
     color: var(--c-blue);
+  }
+
+  .socials a:hover .label {
     border-bottom-color: var(--c-blue-soft);
   }
 
   /* dev-only reminder that a link still needs a URL */
   .pending {
     color: var(--c-ink-faint);
-    text-decoration: line-through;
     cursor: help;
+  }
+
+  .pending .label {
+    text-decoration: line-through;
   }
 
   .copyright {

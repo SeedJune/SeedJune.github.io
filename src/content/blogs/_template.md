@@ -1,23 +1,16 @@
 ---
-# HOW TO ADD A BLOG POST
-#   1. Copy this file and rename it WITHOUT the leading underscore.
-#      The filename becomes the URL: my-first-post.md -> /blog/my-first-post/
-#      Use lowercase-with-hyphens, no spaces, no Chinese characters.
-#   2. Fill in the frontmatter below.
-#   3. Write the article under the closing --- . It is plain Markdown.
-#
-# Files starting with "_" are ignored, so this template never gets a page.
 
 title: 'Post title'
 date: 2026-01-01
 summary: 'One or two sentences. Shown on the card and used as the page description for search engines.'
 
 # Which series this belongs to. Must be one of the `id` values in `blogSeries`
-# in src/data/site.ts — open that file and copy one; the ids are not repeated
-# here on purpose, because a copy of the list here WILL go stale the first time
-# you rename a series (it already did once, which is why this line now defaults
-# to the catch-all). A value that is not in the list fails the build and names
-# this file.
+# in src/data/site.ts — open that file and copy one. The ids are deliberately
+# NOT listed here: a copy of the list goes stale the moment a series is renamed
+# (this line said "tech | research | life" long after those were gone, which is
+# how every post copied from this template arrived with an invalid series).
+# A value that is not in the list fails the build and names this file.
+# `other` is the catch-all if nothing fits.
 series: 'other'
 
 tags: []

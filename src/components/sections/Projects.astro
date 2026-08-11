@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Section from '../Section.astro';
 import EmptyState from '../EmptyState.astro';
 import ProjectCard from '../ProjectCard.astro';
+import Pager from '../Pager.astro';
 
 const projects = (await getCollection('projects'))
   .filter((entry) => !entry.data.draft)
@@ -17,11 +18,13 @@ const projects = (await getCollection('projects'))
         hint="Copy src/content/projects/_template.md, rename it without the underscore, and fill it in."
       />
     ) : (
-      <div class="list">
-        {projects.map((entry) => (
-          <ProjectCard entry={entry} />
-        ))}
-      </div>
+      <Pager size={3} label="Projects">
+        <div class="list" data-pager-list>
+          {projects.map((entry) => (
+            <ProjectCard entry={entry} />
+          ))}
+        </div>
+      </Pager>
     )
   }
 </Section>

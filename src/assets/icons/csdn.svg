@@ -1,0 +1,9 @@
+<!-- CSDN mark, reduced to the red "C" only.
+     The original file also contained the "SDN" wordmark as a second path
+     filled #262626. That path has been REMOVED, not just cropped out: it
+     starts at x=126.59 while the C ends at x=125.53, so any viewBox wide
+     enough to hold the C without clipping also caught the first dark sliver
+     of the S. Deleting it makes the crop unclippable.
+     The viewBox below is the C's exact bounding box.
+     Original: viewBox="-2.97 -12.287 505.61 125.832" with both paths. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.97 0.00 128.50 113.54"><path fill="#ca0c16" d="m111.14 109.998c-6.075 2.107-18.661 3.543-36.246 3.543-50.57 0-77.864-23.737-74.637-55.117 3.862-37.388 44.298-58.424 88.571-58.424 17.147 0 27.244 1.38 36.702 3.694l-3.035 25.189c-6.292-2.118-21.036-4.065-32.972-4.065-26.05 0-48.176 7.759-50.713 32.305-2.262 21.95 13.269 32.442 42.574 32.442 10.201 0 25.24-1.46 32.194-3.57z"/></svg>

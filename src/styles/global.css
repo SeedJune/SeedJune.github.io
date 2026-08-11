@@ -185,9 +185,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/*
+  `height: auto` is not optional here, it is the other half of `max-width`.
+  Astro stamps width/height attributes onto every Markdown image (good — they
+  reserve the space and stop the page jumping as images load), and those
+  attributes act as style hints. Constrain the width without releasing the
+  height and the browser keeps the attribute's height: a 2148x734 diagram in a
+  720px column renders 720x734, i.e. stretched to three times its real height.
+*/
 img,
 svg {
   max-width: 100%;
+  height: auto;
 }
 
 h1,
