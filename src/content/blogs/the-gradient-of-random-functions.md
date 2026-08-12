@@ -22,6 +22,7 @@ draft: false
 在深度学习中，我们常常会遇到神经网络输出一个概率分布，然后从这个概率分布中采样一个随机样本，然后进行接下来的计算。考虑到我们使用梯度的反向传播来训练模型的参数，如果不进行一些特殊处理，那么在计算图中，梯度传到随机采样的节点处时，就会阻塞，从而无法训练。为此，我们需要使用一些 “tricks”，来处理梯度传播中的随机采样节点。最近学习了两种方法，于是写下这篇文章复习巩固，下面分别介绍 **Reparameterization** 和 **Score-function Estimator**.
 
 ## Reparameterization trick
+
 设想一下，我们想对如下的函数求梯度：
 $$
 \mathcal{L}(\theta)=\mathbb{E}_{z\sim p_{\theta}(z)}[f(z)].
@@ -50,11 +51,12 @@ $$
 F_Y(x)=P(Y\leqslant x)=P(g_\theta(\epsilon)\leqslant x)=P(\epsilon\leqslant g_{\theta}^{-1}(x))
 $$
 Because $\forall x \in [0,1], P(\epsilon\leqslant x)=x$.
-Therefor $P(\epsilon\leqslant g_{\theta}^{-1}(x))=g_{\theta}^{-1}(x)=F_Z(x)$, i.e. $F_Y(x)=F_Z(x)$, $Y$ and $Z$ have the same distribution. 
+Therefor $P(\epsilon\leqslant g_{\theta}^{-1}(x))=g_{\theta}^{-1}(x)=F_Z(x)$, i.e. $F_Y(x)=F_Z(x)$, $Y$ and $Z$ have the same distribution.
 
 关于 Reparameterization 在深度学习中的应用，下面分析两个具体例子。
 
 ### VAE
+
 在 VAE 中，输入的 image 经过 Encoder 得到一个 latent space 的一个概率分布，如下图：
 
 ![VAE 的结构图：输入图像经 Encoder 得到 latent space 上的一个概率分布，采样后再经 Decoder 重建](../../assets/blogs/random-function.png)
@@ -67,8 +69,10 @@ $$
 显然可以求梯度用于反向传播。
 
 ### Gumbel-Softmax Trick
+
 上面的 VAE 遇到的情况是从一个 continuous 的分布中随机采样，你们如果是一个 discrete 的分布呢？情况开始变得不一样。试想一下 categorical distribution，在一些自回归任务中，我们要在一个 vocabulary 中采样一个 word，那么这个时候也会产生随机性影响梯度反向传播算法正常工作。
 假设我们要计算 $\mathcal{L}(\theta)=x_i(\theta)$的梯度，$x_i(\theta)$ 是从 $\{x_i(\theta)|i=1,2,...,K\}$ 中随机采样，其中 $P(X=i)=\pi_i,\sum_{i=1}^{K}\pi_i=1$，与上面对 VAE 的处理相同，我们不想在随机抽样中引入参数，这里借助 [Gumbel distribution](https://en.wikipedia.org/wiki/Gumbel_distribution)，主要步骤是：
+
 + 随机采样 $\epsilon_i, i=1,...,K$, where $\epsilon_i\sim \text{i.i.d.}\ \mathcal{N}[0,1]$.
 + 计算 $G_i=-\log(-\log(\epsilon_i)), i=1,...,K$
 + $\mathcal{L}(\theta)=\argmax\{\log \pi_i + G_i\}$，可以通过多元积分的方法证明 $\mathcal{L}=i$ 的概率就是 $\pi_i$. 证明比较复杂，此处略去。
@@ -79,7 +83,9 @@ $$
 值得一提的是，也有[新的方法](https://arxiv.org/abs/2311.12569)来计算 categorical distribution 的梯度。
 
 ## Score-function Estimator
+
 这种方法可以用来计算这些问题的梯度：
+
 + 随机变量是离散的
 + 目标函数形如 $\mathcal{J}(\theta)=\mathbb{E}_{x\sim p_{\theta}(x)}[f(x)]$.
 

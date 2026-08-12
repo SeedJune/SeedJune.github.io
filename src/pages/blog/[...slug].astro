@@ -223,8 +223,23 @@ const seriesLabel = blogSeries.find((s) => s.id === series)?.label ?? series;
     font-size: var(--fs-sm);
   }
 
+  /*
+    Sized to its content, not to the column. Stretching a two-column table of
+    short values across the full measure leaves hundreds of pixels between a
+    label and its value, and the eye loses the row crossing that gap. Wide
+    tables are unaffected — they grow until they hit max-width.
+
+    `display: block` is the enabling trick: overflow-x does nothing on a table
+    element, so a table wider than the column would otherwise push the whole
+    page sideways on a phone instead of scrolling by itself. The rows still
+    lay out as a table inside it.
+  */
   .prose :global(table) {
-    width: 100%;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    overflow-x: auto;
+    margin-inline: auto;
     border-collapse: collapse;
     font-size: var(--fs-sm);
   }
