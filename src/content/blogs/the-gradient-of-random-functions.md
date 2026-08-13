@@ -11,9 +11,8 @@ series: 'math'
 
 tags: ['Gradient', 'Machine Learning']
 
-# Optional cover image. Put the file in src/assets/blogs/ first.
-# cover: ../../assets/blogs/your-image.png
-# coverAlt: 'What the image shows, for screen readers.'
+cover: ../../assets/blogs/random-functions-gradient-cover.png
+coverAlt: '概率分布中的随机样本经过变换后成为可沿计算图传播的梯度路径'
 
 # true = keeps the file but publishes nothing, not even the URL.
 draft: false

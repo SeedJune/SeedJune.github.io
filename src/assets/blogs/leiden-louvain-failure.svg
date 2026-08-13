@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Louvain 中桥节点移动导致社区断裂</title>
+  <desc id="desc">三幅图依次展示桥节点尚在原社区、桥节点移到外部社区、断裂社区被聚合锁死。</desc>
+  <defs>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;fill:#1f2a44}.label{font-size:22px;font-weight:700}.note{font-size:17px;fill:#5f6675}.step{font-size:15px;font-weight:800;letter-spacing:2px;fill:#d8694f}.inverse{fill:#fffaf1}.edge{stroke:#2b3d63;stroke-width:3;stroke-linecap:round}.weak{stroke:#d8694f;stroke-width:3;stroke-dasharray:8 8}.node{stroke:#fffaf0;stroke-width:3}.panel{fill:#fffaf1;stroke:#e1d9ca;stroke-width:2}.community{fill:none;stroke:#df785e;stroke-width:2;stroke-dasharray:7 8}.outside{fill:none;stroke:#248b88;stroke-width:2;stroke-dasharray:7 8}.arrow{stroke:#9c9588;stroke-width:3;fill:none}.cross{stroke:#c64f43;stroke-width:5;stroke-linecap:round}
+    </style>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5 0 9z" fill="#9c9588"/></marker>
+  </defs>
+  <rect width="1200" height="620" rx="28" fill="#f3eee4"/>
+  <text x="56" y="62" class="label">Louvain 的结构性盲点：一次合法移动，留下一个不合法的社区形状</text>
+
+  <rect x="50" y="102" width="330" height="410" rx="22" class="panel"/>
+  <text x="78" y="140" class="step">01 · 移动之前</text>
+  <ellipse cx="208" cy="300" rx="135" ry="114" class="community"/>
+  <ellipse cx="323" cy="196" rx="37" ry="48" class="outside"/>
+  <g class="edge"><path d="M116 265L168 225M116 265L170 315M168 225L205 272M170 315L205 272M205 272L260 225M205 272L265 318M260 225L265 318"/></g>
+  <path d="M205 272L315 205" class="weak"/>
+  <g fill="#d8694f" class="node"><circle cx="116" cy="265" r="15"/><circle cx="168" cy="225" r="15"/><circle cx="170" cy="315" r="15"/><circle cx="205" cy="272" r="19"/><circle cx="260" cy="225" r="15"/><circle cx="265" cy="318" r="15"/></g>
+  <circle cx="315" cy="205" r="18" fill="#248b88" class="node"/>
+  <text x="198" y="280" font-size="17" font-weight="800" fill="#fff">x</text>
+  <text x="78" y="463" class="note">x 是左右两块之间唯一的桥，</text><text x="78" y="488" class="note">同时又连接外部社区。</text>
+
+  <path d="M397 306H433" class="arrow" marker-end="url(#arrow)"/>
+
+  <rect x="450" y="102" width="330" height="410" rx="22" class="panel"/>
+  <text x="478" y="140" class="step">02 · x 移到外部</text>
+  <ellipse cx="608" cy="300" rx="135" ry="114" class="community"/>
+  <ellipse cx="722" cy="196" rx="40" ry="50" class="outside"/>
+  <g class="edge"><path d="M516 265L568 225M516 265L570 315M568 225L570 315M660 225L665 318"/></g>
+  <path d="M708 213L722 198" class="edge"/>
+  <g fill="#d8694f" class="node"><circle cx="516" cy="265" r="15"/><circle cx="568" cy="225" r="15"/><circle cx="570" cy="315" r="15"/><circle cx="660" cy="225" r="15"/><circle cx="665" cy="318" r="15"/></g>
+  <circle cx="708" cy="213" r="19" fill="#248b88" class="node"/>
+  <circle cx="730" cy="184" r="16" fill="#248b88" class="node"/>
+  <text x="701" y="220" font-size="17" font-weight="800" fill="#fff">x</text>
+  <path d="M602 251L625 274M625 251L602 274" class="cross"/>
+  <text x="478" y="463" class="note">旧社区的标签没有变化，</text><text x="478" y="488" class="note">但诱导子图已经不连通。</text>
+
+  <path d="M797 306H833" class="arrow" marker-end="url(#arrow)"/>
+
+  <rect x="850" y="102" width="300" height="410" rx="22" class="panel"/>
+  <text x="878" y="140" class="step">03 · 聚合后锁死</text>
+  <circle cx="968" cy="274" r="77" fill="#d8694f" opacity=".94"/>
+  <circle cx="1080" cy="200" r="45" fill="#248b88" opacity=".94"/>
+  <path d="M1019 238L1043 222" class="edge"/>
+  <text x="923" y="266" font-size="19" font-weight="800" fill="#fff">断裂社区</text>
+  <text x="930" y="293" font-size="16" fill="#fff">一个超节点</text>
+  <text x="1053" y="205" font-size="16" font-weight="800" fill="#fff">外部</text>
+  <path d="M915 355C949 385 1010 385 1044 355" fill="none" stroke="#c64f43" stroke-width="4"/>
+  <text x="878" y="420" class="label" font-size="19">无法再拆开</text>
+  <text x="878" y="463" class="note">后续层级只能移动整个超节点，</text><text x="878" y="488" class="note">无法分别移动左右两块。</text>
+
+  <rect x="50" y="542" width="1100" height="44" rx="12" fill="#1f2a44"/>
+  <text x="600" y="571" text-anchor="middle" font-size="18" font-weight="700" class="inverse">问题不在于“迭代不够多”，而在于错误结构被过早压缩。</text>
+</svg>

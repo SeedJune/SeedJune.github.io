@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">Leiden 算法的一轮：局部移动、细化和聚合</title>
+  <desc id="desc">粗划分中的一个社区在细化阶段被拆成两个子社区，再分别压成超节点，同时继承相同的粗社区标签。</desc>
+  <defs>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;fill:#1f2a44}.head{font-size:23px;font-weight:800}.sub{font-size:16px;fill:#697080}.num{font-size:14px;font-weight:800;letter-spacing:2px;fill:#d8694f}.inverse{fill:#fffaf1}.inverseAccent{fill:#f7dfd5}.panel{fill:#fffaf1;stroke:#dfd7c8;stroke-width:2}.edge{stroke:#384a70;stroke-width:3;stroke-linecap:round}.node{stroke:#fffaf1;stroke-width:3}.coarse{fill:none;stroke:#d8694f;stroke-width:2;stroke-dasharray:8 8}.refineA{fill:none;stroke:#d8694f;stroke-width:3}.refineB{fill:none;stroke:#d7a22d;stroke-width:3}.arrow{stroke:#8d938f;stroke-width:3;fill:none}.caption{font-size:17px;fill:#535b6a}
+    </style>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5 0 9z" fill="#8d938f"/></marker>
+  </defs>
+  <rect width="1200" height="650" rx="28" fill="#f3eee4"/>
+  <text x="54" y="58" class="head">Leiden 的一轮：先找到粗结构，再决定什么可以安全地压缩</text>
+
+  <rect x="50" y="94" width="315" height="430" rx="22" class="panel"/>
+  <text x="78" y="135" class="num">01 · FAST LOCAL MOVE</text>
+  <text x="78" y="170" class="head">快速局部移动</text>
+  <ellipse cx="205" cy="315" rx="125" ry="105" class="coarse"/>
+  <g class="edge"><path d="M120 290L166 245M120 290L164 355M166 245L206 298M164 355L206 298M206 298L260 247M206 298L272 352M260 247L272 352"/></g>
+  <g fill="#d8694f" class="node"><circle cx="120" cy="290" r="15"/><circle cx="166" cy="245" r="15"/><circle cx="164" cy="355" r="15"/><circle cx="206" cy="298" r="16"/><circle cx="260" cy="247" r="15"/><circle cx="272" cy="352" r="15"/></g>
+  <rect x="82" y="435" width="251" height="53" rx="12" fill="#f1dfd7"/>
+  <text x="207" y="467" text-anchor="middle" class="caption">得到粗划分 𝒫</text>
+
+  <path d="M382 309H416" class="arrow" marker-end="url(#arr)"/>
+
+  <rect x="433" y="94" width="334" height="430" rx="22" class="panel"/>
+  <text x="461" y="135" class="num">02 · REFINEMENT</text>
+  <text x="461" y="170" class="head">社区内部细化</text>
+  <ellipse cx="600" cy="315" rx="137" ry="108" class="coarse"/>
+  <ellipse cx="535" cy="308" rx="61" ry="82" class="refineA"/>
+  <ellipse cx="668" cy="308" rx="61" ry="82" class="refineB"/>
+  <g class="edge"><path d="M504 285L545 248M504 285L540 350M545 248L540 350M635 248L691 285M635 248L684 351M691 285L684 351"/></g>
+  <g fill="#d8694f" class="node"><circle cx="504" cy="285" r="15"/><circle cx="545" cy="248" r="15"/><circle cx="540" cy="350" r="15"/></g>
+  <g fill="#d7a22d" class="node"><circle cx="635" cy="248" r="15"/><circle cx="691" cy="285" r="15"/><circle cx="684" cy="351" r="15"/></g>
+  <path d="M570 300H610" stroke="#b7afa1" stroke-width="2" stroke-dasharray="5 6"/>
+  <rect x="465" y="435" width="270" height="53" rx="12" fill="#f4ead1"/>
+  <text x="600" y="467" text-anchor="middle" class="caption">𝒫refined 比 𝒫 更细</text>
+
+  <path d="M784 309H818" class="arrow" marker-end="url(#arr)"/>
+
+  <rect x="835" y="94" width="315" height="430" rx="22" class="panel"/>
+  <text x="863" y="135" class="num">03 · AGGREGATION</text>
+  <text x="863" y="170" class="head">按细化结果聚合</text>
+  <rect x="892" y="231" width="95" height="95" rx="29" fill="#d8694f"/>
+  <rect x="1014" y="231" width="95" height="95" rx="29" fill="#d7a22d"/>
+  <path d="M987 278H1014" class="edge"/>
+  <text x="939" y="286" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">A₁</text>
+  <text x="1061" y="286" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">A₂</text>
+  <path d="M876 208C909 182 1086 182 1120 208" fill="none" stroke="#d8694f" stroke-width="2" stroke-dasharray="7 7"/>
+  <text x="998" y="197" text-anchor="middle" class="sub">仍继承同一个粗社区标签 A</text>
+  <rect x="867" y="435" width="251" height="53" rx="12" fill="#e2ece7"/>
+  <text x="993" y="457" text-anchor="middle" class="caption">两个可独立移动的</text><text x="993" y="479" text-anchor="middle" class="caption">超节点</text>
+
+  <rect x="50" y="550" width="1100" height="65" rx="15" fill="#1f2a44"/>
+  <text x="600" y="577" text-anchor="middle" font-size="17" class="inverseAccent">粗划分 𝒫 决定初始标签</text>
+  <text x="600" y="601" text-anchor="middle" font-size="20" font-weight="800" class="inverse">细化划分 𝒫refined 决定真正的聚合单元</text>
+</svg>

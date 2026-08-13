@@ -9,9 +9,8 @@ series: 'culture'
 
 tags: ['New Zealand', 'Foreign culture']
 
-# Optional cover image. Put the file in src/assets/blogs/ first.
-# cover: ../../assets/blogs/your-image.png
-# coverAlt: 'What the image shows, for screen readers.'
+cover: ../../assets/blogs/nz-culture-1980s-cover.png
+coverAlt: '1980 年代新西兰的社区表演、模拟摄影机、海岸小镇与和平游行组成的文化拼贴'
 
 # true = keeps the file but publishes nothing, not even the URL.
 draft: false

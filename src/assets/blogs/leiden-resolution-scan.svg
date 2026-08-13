@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">不同分辨率参数下社区尺度的变化</title>
+  <desc id="desc">同一组节点在低中高三个分辨率下，分别形成两个、三个和五个社区，展示参数扫描而不是寻找单个正确值。</desc>
+  <defs>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;fill:#1f2a44}.title{font-size:23px;font-weight:800}.gamma{font-size:20px;font-weight:800}.note{font-size:16px;fill:#626a78}.panel{fill:#fffaf1;stroke:#dfd7c8;stroke-width:2}.edge{stroke:#6d7890;stroke-width:2;opacity:.7}.node{stroke:#fffaf1;stroke-width:2.5}.boundary{fill:none;stroke-width:2;stroke-dasharray:7 7}
+    </style>
+  </defs>
+  <rect width="1200" height="600" rx="28" fill="#f3eee4"/>
+  <text x="54" y="57" class="title">分辨率不是“社区数旋钮”：扫描的是结构尺度，而不是寻找魔法值</text>
+
+  <g transform="translate(50 94)">
+    <rect width="330" height="420" rx="22" class="panel"/>
+    <text x="28" y="43" class="gamma">低 γ · 0.2</text><text x="28" y="69" class="note">合并代价较低 → 2 个大社区</text>
+    <ellipse cx="93" cy="231" rx="62" ry="118" class="boundary" stroke="#d8694f"/>
+    <ellipse cx="237" cy="231" rx="70" ry="118" class="boundary" stroke="#248b88"/>
+    <g class="edge"><path d="M70 170L108 202L72 247L112 287L70 320M206 165L255 185L211 232L263 258L225 308M108 202L206 165M112 287L225 308"/></g>
+    <g fill="#d8694f" class="node"><circle cx="70" cy="170" r="13"/><circle cx="108" cy="202" r="13"/><circle cx="72" cy="247" r="13"/><circle cx="112" cy="287" r="13"/><circle cx="70" cy="320" r="13"/></g>
+    <g fill="#248b88" class="node"><circle cx="206" cy="165" r="13"/><circle cx="255" cy="185" r="13"/><circle cx="211" cy="232" r="13"/><circle cx="263" cy="258" r="13"/><circle cx="225" cy="308" r="13"/></g>
+    <text x="165" y="390" text-anchor="middle" class="note">适合观察宏观分块</text>
+  </g>
+
+  <g transform="translate(435 94)">
+    <rect width="330" height="420" rx="22" class="panel"/>
+    <text x="28" y="43" class="gamma">中 γ · 0.5</text><text x="28" y="69" class="note">尺度平衡 → 3 个社区</text>
+    <ellipse cx="78" cy="210" rx="49" ry="78" class="boundary" stroke="#d8694f"/>
+    <ellipse cx="241" cy="194" rx="56" ry="73" class="boundary" stroke="#248b88"/>
+    <ellipse cx="173" cy="302" rx="57" ry="66" class="boundary" stroke="#427fa7"/>
+    <g class="edge"><path d="M58 178L91 207L60 244M213 167L253 185L231 224M145 277L188 279L165 326M91 207L213 167M60 244L145 277M231 224L188 279"/></g>
+    <g fill="#d8694f" class="node"><circle cx="58" cy="178" r="13"/><circle cx="91" cy="207" r="13"/><circle cx="60" cy="244" r="13"/></g>
+    <g fill="#248b88" class="node"><circle cx="213" cy="167" r="13"/><circle cx="253" cy="185" r="13"/><circle cx="231" cy="224" r="13"/></g>
+    <g fill="#427fa7" class="node"><circle cx="145" cy="277" r="13"/><circle cx="188" cy="279" r="13"/><circle cx="165" cy="326" r="13"/></g>
+    <text x="165" y="390" text-anchor="middle" class="note">可能出现稳定的平台区间</text>
+  </g>
+
+  <g transform="translate(820 94)">
+    <rect width="330" height="420" rx="22" class="panel"/>
+    <text x="28" y="43" class="gamma">高 γ · 0.9</text><text x="28" y="69" class="note">扩张代价较高 → 5 个小社区</text>
+    <g class="edge"><path d="M62 170L91 194M184 154L217 174M255 245L280 274M145 286L173 310M60 170L184 154M91 194L145 286M217 174L255 245M173 310L280 274"/></g>
+    <g class="node"><circle cx="62" cy="170" r="15" fill="#d8694f"/><circle cx="91" cy="194" r="15" fill="#d8694f"/><circle cx="184" cy="154" r="15" fill="#d7a22d"/><circle cx="217" cy="174" r="15" fill="#d7a22d"/><circle cx="255" cy="245" r="15" fill="#248b88"/><circle cx="280" cy="274" r="15" fill="#248b88"/><circle cx="145" cy="286" r="15" fill="#427fa7"/><circle cx="173" cy="310" r="15" fill="#427fa7"/><circle cx="61" cy="302" r="15" fill="#896ea5"/><circle cx="84" cy="327" r="15" fill="#896ea5"/></g>
+    <g class="boundary"><ellipse cx="77" cy="182" rx="42" ry="35" stroke="#d8694f"/><ellipse cx="201" cy="165" rx="45" ry="33" stroke="#d7a22d"/><ellipse cx="268" cy="259" rx="43" ry="42" stroke="#248b88"/><ellipse cx="159" cy="298" rx="46" ry="43" stroke="#427fa7"/><ellipse cx="72" cy="315" rx="42" ry="39" stroke="#896ea5"/></g>
+    <text x="165" y="390" text-anchor="middle" class="note">过高时可能碎片化</text>
+  </g>
+
+  <path d="M130 552H1070" stroke="#b7afa1" stroke-width="3"/>
+  <path d="M1070 552L1056 544V560z" fill="#b7afa1"/>
+  <text x="600" y="579" text-anchor="middle" class="note">γ 增大：社区通常变小，但具体变化并不保证连续或严格单调</text>
+</svg>

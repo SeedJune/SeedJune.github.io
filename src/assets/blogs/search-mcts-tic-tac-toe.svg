@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">井字棋 MCTS 根动作统计随迭代次数变化</title>
+  <desc id="desc">在一个 X 即将获胜的井字棋局面中，五个合法动作的访问次数和平均回报在 25、100、400、1600 次迭代时的变化。必胜动作 9 的访问次数最终达到 875，平均回报保持 1。</desc>
+  <defs>
+    <style>
+      .title{font:700 30px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;fill:#0f172a}
+      .sub{font:400 16px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;fill:#475569}
+      .panel{font:700 20px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;fill:#0f172a}
+      .axis{font:500 13px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;fill:#64748b}
+      .grid{stroke:#dbe2ea;stroke-width:1}
+      .frame{fill:#ffffff;stroke:#cbd5e1;stroke-width:1.5}
+      .boardLine{stroke:#64748b;stroke-width:4;stroke-linecap:round}
+      .mark{font:500 58px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#0f172a;text-anchor:middle;dominant-baseline:middle}
+      .move{font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;text-anchor:middle;dominant-baseline:middle}
+      .series{fill:none;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+      .point{stroke:#ffffff;stroke-width:2}
+      .end{font:700 13px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" rx="24" fill="#f8fafc"/>
+  <text class="title" x="56" y="55">MCTS：根节点统计会随模拟预算逐渐集中</text>
+  <text class="sub" x="56" y="87">固定随机种子 20260813；UCT c=√2；随机 rollout；X 的回报为胜 1、和 0.5、负 0。</text>
+
+  <g transform="translate(62 0)">
+    <text class="panel" x="0" y="134">当前局面：X 行动</text>
+    <rect class="frame" x="0" y="155" width="342" height="342" rx="16"/>
+    <line class="boardLine" x1="114" y1="166" x2="114" y2="486"/>
+    <line class="boardLine" x1="228" y1="166" x2="228" y2="486"/>
+    <line class="boardLine" x1="11" y1="269" x2="331" y2="269"/>
+    <line class="boardLine" x1="11" y1="383" x2="331" y2="383"/>
+
+    <text class="mark" x="57" y="212">X</text>
+    <text class="mark" x="171" y="212">O</text>
+    <text class="mark" x="171" y="326">X</text>
+    <text class="mark" x="57" y="440">O</text>
+
+    <circle cx="285" cy="212" r="25" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/><text class="move" x="285" y="212" fill="#64748b">3</text>
+    <circle cx="57" cy="326" r="25" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/><text class="move" x="57" y="326" fill="#c2410c">4</text>
+    <circle cx="285" cy="326" r="25" fill="#f3e8ff" stroke="#7c3aed" stroke-width="2"/><text class="move" x="285" y="326" fill="#6d28d9">6</text>
+    <circle cx="171" cy="440" r="25" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text class="move" x="171" y="440" fill="#1d4ed8">8</text>
+    <circle cx="285" cy="440" r="30" fill="#dcfce7" stroke="#15803d" stroke-width="4"/><text class="move" x="285" y="440" fill="#166534">9</text>
+
+    <text class="sub" x="171" y="535" text-anchor="middle">合法动作：3、4、6、8、9</text>
+    <text class="sub" x="171" y="565" text-anchor="middle" fill="#166534" font-weight="700">动作 9 立即完成对角线，回报恒为 1</text>
+    <g transform="translate(6 602)">
+      <circle cx="10" cy="0" r="6" fill="#64748b"/><text class="axis" x="24" y="5">动作 3</text>
+      <circle cx="100" cy="0" r="6" fill="#ea580c"/><text class="axis" x="114" y="5">动作 4</text>
+      <circle cx="190" cy="0" r="6" fill="#7c3aed"/><text class="axis" x="204" y="5">动作 6</text>
+      <circle cx="10" cy="30" r="6" fill="#2563eb"/><text class="axis" x="24" y="35">动作 8</text>
+      <circle cx="100" cy="30" r="6" fill="#15803d"/><text class="axis" x="114" y="35">动作 9</text>
+    </g>
+  </g>
+
+  <g transform="translate(458 0)">
+    <text class="panel" x="0" y="134">根动作访问次数 Nᵢ（对数刻度）</text>
+    <rect class="frame" x="0" y="150" width="684" height="230" rx="12"/>
+    <line class="grid" x1="58" y1="160" x2="552" y2="160"/><text class="axis" x="46" y="165" text-anchor="end">1000</text>
+    <line class="grid" x1="58" y1="227" x2="552" y2="227"/><text class="axis" x="46" y="232" text-anchor="end">100</text>
+    <line class="grid" x1="58" y1="293" x2="552" y2="293"/><text class="axis" x="46" y="298" text-anchor="end">10</text>
+    <line class="grid" x1="58" y1="360" x2="552" y2="360"/><text class="axis" x="46" y="365" text-anchor="end">1</text>
+    <line x1="58" y1="160" x2="58" y2="360" stroke="#94a3b8"/><line x1="58" y1="360" x2="552" y2="360" stroke="#94a3b8"/>
+
+    <polyline class="series" stroke="#64748b" points="102,328 252,296 402,266 552,251"/>
+    <polyline class="series" stroke="#ea580c" points="102,304 252,272 402,234 552,196"/>
+    <polyline class="series" stroke="#7c3aed" points="102,313 252,272 402,236 552,196"/>
+    <polyline class="series" stroke="#2563eb" points="102,320 252,276 402,245 552,225"/>
+    <polyline class="series" stroke="#15803d" points="102,308 252,261 402,211 552,164"/>
+
+    <g fill="#64748b"><circle class="point" cx="102" cy="328" r="5"/><circle class="point" cx="252" cy="296" r="5"/><circle class="point" cx="402" cy="266" r="5"/><circle class="point" cx="552" cy="251" r="5"/></g>
+    <g fill="#ea580c"><circle class="point" cx="102" cy="304" r="5"/><circle class="point" cx="252" cy="272" r="5"/><circle class="point" cx="402" cy="234" r="5"/><circle class="point" cx="552" cy="196" r="5"/></g>
+    <g fill="#7c3aed"><circle class="point" cx="102" cy="313" r="5"/><circle class="point" cx="252" cy="272" r="5"/><circle class="point" cx="402" cy="236" r="5"/><circle class="point" cx="552" cy="196" r="5"/></g>
+    <g fill="#2563eb"><circle class="point" cx="102" cy="320" r="5"/><circle class="point" cx="252" cy="276" r="5"/><circle class="point" cx="402" cy="245" r="5"/><circle class="point" cx="552" cy="225" r="5"/></g>
+    <g fill="#15803d"><circle class="point" cx="102" cy="308" r="5"/><circle class="point" cx="252" cy="261" r="5"/><circle class="point" cx="402" cy="211" r="5"/><circle class="point" cx="552" cy="164" r="5"/></g>
+
+    <text class="end" x="570" y="168" fill="#15803d">动作 9 · 875</text>
+    <line x1="552" y1="196" x2="567" y2="184" stroke="#ea580c"/><text class="end" x="570" y="187" fill="#c2410c">动作 4 · 290</text>
+    <line x1="552" y1="196" x2="567" y2="204" stroke="#7c3aed"/><text class="end" x="570" y="208" fill="#6d28d9">动作 6 · 287</text>
+    <text class="end" x="570" y="229" fill="#1d4ed8">动作 8 · 105</text>
+    <text class="end" x="570" y="255" fill="#475569">动作 3 · 43</text>
+
+    <text class="axis" x="102" y="374" text-anchor="middle">25</text><text class="axis" x="252" y="374" text-anchor="middle">100</text><text class="axis" x="402" y="374" text-anchor="middle">400</text><text class="axis" x="552" y="374" text-anchor="middle">1600 次迭代</text>
+  </g>
+
+  <g transform="translate(458 0)">
+    <text class="panel" x="0" y="428">平均回报 Qᵢ/Nᵢ（含和棋半分）</text>
+    <rect class="frame" x="0" y="444" width="684" height="246" rx="12"/>
+    <line class="grid" x1="58" y1="470" x2="552" y2="470"/><text class="axis" x="46" y="475" text-anchor="end">1.00</text>
+    <line class="grid" x1="58" y1="534" x2="552" y2="534"/><text class="axis" x="46" y="539" text-anchor="end">0.75</text>
+    <line class="grid" x1="58" y1="599" x2="552" y2="599"/><text class="axis" x="46" y="604" text-anchor="end">0.50</text>
+    <line class="grid" x1="58" y1="650" x2="552" y2="650"/><text class="axis" x="46" y="655" text-anchor="end">0.30</text>
+    <line x1="58" y1="470" x2="58" y2="650" stroke="#94a3b8"/><line x1="58" y1="650" x2="552" y2="650" stroke="#94a3b8"/>
+
+    <polyline class="series" stroke="#64748b" points="102,642 252,599 402,584 552,590"/>
+    <polyline class="series" stroke="#ea580c" points="102,507 252,501 402,504 552,495"/>
+    <polyline class="series" stroke="#7c3aed" points="102,521 252,501 402,507 552,495"/>
+    <polyline class="series" stroke="#2563eb" points="102,534 252,513 402,526 552,534"/>
+    <polyline class="series" stroke="#15803d" points="102,470 252,470 402,470 552,470"/>
+
+    <g fill="#64748b"><circle class="point" cx="102" cy="642" r="5"/><circle class="point" cx="252" cy="599" r="5"/><circle class="point" cx="402" cy="584" r="5"/><circle class="point" cx="552" cy="590" r="5"/></g>
+    <g fill="#ea580c"><circle class="point" cx="102" cy="507" r="5"/><circle class="point" cx="252" cy="501" r="5"/><circle class="point" cx="402" cy="504" r="5"/><circle class="point" cx="552" cy="495" r="5"/></g>
+    <g fill="#7c3aed"><circle class="point" cx="102" cy="521" r="5"/><circle class="point" cx="252" cy="501" r="5"/><circle class="point" cx="402" cy="507" r="5"/><circle class="point" cx="552" cy="495" r="5"/></g>
+    <g fill="#2563eb"><circle class="point" cx="102" cy="534" r="5"/><circle class="point" cx="252" cy="513" r="5"/><circle class="point" cx="402" cy="526" r="5"/><circle class="point" cx="552" cy="534" r="5"/></g>
+    <g fill="#15803d"><circle class="point" cx="102" cy="470" r="5"/><circle class="point" cx="252" cy="470" r="5"/><circle class="point" cx="402" cy="470" r="5"/><circle class="point" cx="552" cy="470" r="5"/></g>
+
+    <text class="end" x="570" y="474" fill="#15803d">动作 9 · 100%</text>
+    <line x1="552" y1="495" x2="567" y2="486" stroke="#ea580c"/><text class="end" x="570" y="489" fill="#c2410c">动作 4 · 90.3%</text>
+    <line x1="552" y1="495" x2="567" y2="505" stroke="#7c3aed"/><text class="end" x="570" y="509" fill="#6d28d9">动作 6 · 90.2%</text>
+    <text class="end" x="570" y="538" fill="#1d4ed8">动作 8 · 75.2%</text>
+    <text class="end" x="570" y="594" fill="#475569">动作 3 · 53.5%</text>
+
+    <text class="axis" x="102" y="674" text-anchor="middle">25</text><text class="axis" x="252" y="674" text-anchor="middle">100</text><text class="axis" x="402" y="674" text-anchor="middle">400</text><text class="axis" x="552" y="674" text-anchor="middle">1600 次迭代</text>
+  </g>
+
+  <text class="sub" x="600" y="727" text-anchor="middle">单次固定种子实验只演示统计如何收敛，不代表所有运行都产生相同数字。</text>
+</svg>

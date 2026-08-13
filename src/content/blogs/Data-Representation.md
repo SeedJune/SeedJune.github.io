@@ -8,9 +8,8 @@ series: 'csapp'
 
 tags: ['Computer system', 'Notes']
 
-# Optional cover image. Put the file in src/assets/blogs/ first.
-# cover: ../../assets/blogs/your-image.png
-# coverAlt: 'What the image shows, for screen readers.'
+cover: ../../assets/blogs/data-representation-cover.png
+coverAlt: '抽象比特流经过内存单元和位操作结构，最终形成分层的数据表示'
 
 # true = keeps the file but publishes nothing, not even the URL.
 draft: false
