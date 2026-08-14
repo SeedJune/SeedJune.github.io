@@ -132,6 +132,28 @@ export const skills = {
 };
 
 /* --------------------------------------------------------------------------
+   MBTI — four rings under "Beyond work", one per dichotomy.
+
+   Each entry is the side you scored on, plus how strongly: `percent` is the
+   number a test like 16personalities prints next to that trait, and it fills
+   exactly that fraction of the ring. The four `letter`s read left to right as
+   your type, so keep them in the E/I – S/N – T/F – J/P order below.
+
+   Emptying the array (`= []`) removes the whole block, heading included.
+
+   These four are from a 16personalities result: INTJ. That test reports a
+   fifth bar, Identity (56% Turbulent, the "-T" in INTJ-T), which is not one
+   of the four letters and so is left out — add a fifth entry here if you ever
+   want it and the row will simply grow one ring.
+   -------------------------------------------------------------------------- */
+export const mbti: { letter: string; trait: string; percent: number }[] = [
+  { letter: 'I', trait: 'Introverted', percent: 61 },
+  { letter: 'N', trait: 'Intuitive', percent: 69 },
+  { letter: 'T', trait: 'Thinking', percent: 67 },
+  { letter: 'J', trait: 'Judging', percent: 90 },
+];
+
+/* --------------------------------------------------------------------------
    Blog series — the filter tabs above the Blogs section, in this order.
 
    `id` is what a post's `series:` frontmatter field has to match. It is

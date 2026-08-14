@@ -1,7 +1,8 @@
 ---
 import Section from '../Section.astro';
 import TagList from '../TagList.astro';
-import { profile, skills } from '../../data/site';
+import MbtiRing from '../MbtiRing.astro';
+import { profile, skills, mbti } from '../../data/site';
 
 /* A `\n` in `bio` means "new paragraph". It has to be turned into real markup
    here: HTML collapses newlines into spaces, so dropping the whole string into
@@ -128,6 +129,25 @@ const intros = [
       <h3 class="subhead">Beyond work</h3>
       <TagList tags={skills.hobbies} tone="pink" />
     </div>
+
+    {/* Emptying `mbti` in site.ts removes the heading too — a lone subhead
+        over nothing looks like something failed to load. */}
+    {
+      mbti.length > 0 && (
+        <div class="block">
+          <h3 class="subhead">MBTI</h3>
+          <ul class="mbti">
+            {mbti.map((dial) => (
+              <MbtiRing
+                letter={dial.letter}
+                trait={dial.trait}
+                percent={dial.percent}
+              />
+            ))}
+          </ul>
+        </div>
+      )
+    }
   </div>
 </Section>
 
@@ -267,6 +287,14 @@ const intros = [
     height: 6px;
     border-radius: var(--r-full);
     background: var(--c-blue-soft);
+  }
+
+  /* Four across on a normal screen; the wrap plus the row gap is what keeps a
+     narrow phone from squeezing the rings instead of stacking them 2×2. */
+  .mbti {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4) var(--sp-6);
   }
 
   .languages {

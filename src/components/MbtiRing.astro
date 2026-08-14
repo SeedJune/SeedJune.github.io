@@ -1,0 +1,127 @@
+---
+/*
+  One MBTI dichotomy: a round pink tag with a hairline gauge drawn around it.
+
+  Exactly one thing here is pink twice over: the letter (--c-pink, the same
+  ink TagList gives the hobbies right above) and the filled part of the gauge
+  (--c-pink-soft, the palest pink the palette has). Everything else is
+  neutral — a --c-bg-tint disc under the letter and a --c-border remainder on
+  the gauge — so the eye lands on the letter first and reads the arc second.
+
+  Colour alone never carries the number (WCAG 1.4.1): the trait and the
+  percentage are printed underneath, so the gauge is decoration on top of a
+  label that already says everything.
+*/
+interface Props {
+  letter: string;
+  trait: string;
+  percent: number;
+}
+
+const { letter, trait, percent } = Astro.props;
+
+/* Geometry lives here, not in the markup, so the stroke width and the radius
+   cannot drift apart: the ring has to stay inside the 56×56 viewBox, and the
+   dash pattern has to be computed from the same radius the circles use. */
+const R = 23;
+const CIRCUMFERENCE = 2 * Math.PI * R;
+
+/* Guards a bad number in site.ts: an arc longer than the circle wraps around
+   and lands short, which would silently show 110% as 10%. */
+const filled = Math.max(0, Math.min(100, percent)) / 100;
+const dash = `${(filled * CIRCUMFERENCE).toFixed(2)} ${CIRCUMFERENCE.toFixed(2)}`;
+---
+
+<li class="dial">
+  {/* aria-hidden because the caption below already carries the same
+      information in text — a screen reader should hear it once, not twice. */}
+  <svg
+    class="dial__ring"
+    viewBox="0 0 56 56"
+    width="56"
+    height="56"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <circle class="dial__track" cx="28" cy="28" r={R} />
+    <circle
+      class="dial__arc"
+      cx="28"
+      cy="28"
+      r={R}
+      stroke-dasharray={dash}
+      transform="rotate(-90 28 28)"
+    />
+    <text class="dial__letter" x="28" y="28">{letter}</text>
+  </svg>
+  <span class="dial__trait">{trait}</span>
+  <span class="dial__percent">{Math.round(percent)}%</span>
+</li>
+
+<style>
+  .dial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-1);
+    /* Wide enough for "Prospecting" and "Extraverted" to sit on one line, so
+       the four captions keep a shared baseline instead of one wrapping. */
+    min-width: 6.5rem;
+  }
+
+  .dial__ring {
+    /* Both are required: `width`/`height` on the tag are only hints, and the
+       global `img, svg { max-width: 100% }` rule would otherwise squash the
+       ring on a narrow screen while the viewBox keeps its square aspect. */
+    width: 56px;
+    height: 56px;
+    flex: none;
+  }
+
+  /* 5px reads as quiet here even though a hairline is this page's habit: the
+     two colours are so pale that a thin band left the filled fraction almost
+     impossible to see. Weight buys back the legibility that saturation gave
+     up, and a wide pale band is still calmer than a thin saturated one. */
+  .dial__track,
+  .dial__arc {
+    stroke-width: 5;
+  }
+
+  /* Grey disc, grey remainder — two neutrals one step apart, so the disc
+     still reads as a filled shape rather than a hole while leaving pink to
+     the letter and the arc alone. */
+  .dial__track {
+    fill: var(--c-bg-tint);
+    stroke: var(--c-border);
+  }
+
+  /* Butt caps rather than round: at this weight a rounded end reads as a
+     stylistic flourish, and it also overshoots the true percentage by half a
+     stroke at each end. */
+  .dial__arc {
+    fill: none;
+    stroke: var(--c-pink-soft);
+  }
+
+  .dial__letter {
+    /* SVG text takes neither the page font nor `em` sizing from the cascade
+       the way HTML does, so both are stated outright. */
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    fill: var(--c-pink);
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .dial__trait {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-muted);
+  }
+
+  .dial__percent {
+    font-size: var(--fs-xs);
+    color: var(--c-ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+</style>
