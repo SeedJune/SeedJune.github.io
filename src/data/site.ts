@@ -169,6 +169,7 @@ export const mbti: { letter: string; trait: string; percent: number }[] = [
    -------------------------------------------------------------------------- */
 export const blogSeries = [
   {id: '3dgs', label: 'Gaussian Splatting'},
+  {id: '3dv', label: '3D Vision'},
   {id: 'world model', label: 'World Models'},
   {id: 'csapp', label: 'CSAPP Notes' },
   {id: 'books and movies', label: 'Books & Movies' },
