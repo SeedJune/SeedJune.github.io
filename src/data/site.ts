@@ -174,6 +174,7 @@ export const blogSeries = [
   {id: 'csapp', label: 'CSAPP Notes' },
   {id: 'books and movies', label: 'Books & Movies' },
   {id: 'math', label: 'Mathematics'},
+  {id: 'pattern-recognition', label: 'Pattern Recognition'},
   {id: 'algorithm', label: 'Algorithms'},
   {id: 'games', label: 'Games'},
   {id: 'economics', label: 'Economics'},
