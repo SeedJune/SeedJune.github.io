@@ -6,7 +6,7 @@ summary: 'My note for CSAPP Chapter 2.'
 
 series: 'csapp'
 
-* tags: ['Computer system', 'Notes']
+tags: ['Computer system', 'Notes']
 
 cover: ../../assets/blogs/data-representation-cover.png
 coverAlt: '抽象比特流经过内存单元和位操作结构，最终形成分层的数据表示'
