@@ -110,6 +110,11 @@ export const experience: {
 
 export const awards: { title: string; org: string; date: string }[] = [
   {
+    title: 'May Fourth Scholarship, Peking University',
+    org: 'Peking University',
+    date: '2026-09',
+  },
+  {
     title: '"Jiang Zhehan Cup" Mathematical Modeling and Computer Application Competition - Second Prize',
     org: 'School of Mathematical Science, Peking University',
     date: '2025-04',
